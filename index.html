@@ -1,63 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- ========================================
+         HTML HEAD SECTION - METADATA AND RESOURCES
+         ======================================== -->
+    
+    <!-- Character encoding for proper text display -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Viewport settings for responsive design on mobile devices -->
+    <!-- width=device-width: Sets viewport width to device width -->
+    <!-- initial-scale=1.0: Sets initial zoom level to 100% -->
+    <!-- maximum-scale=1.0: Prevents users from zooming in beyond 100% -->
+    <!-- user-scalable=no: Disables user zooming for better mobile experience -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Theme color for browser UI (address bar, etc.) -->
+    <meta name="theme-color" content="#4f46e5">
+    
+    <!-- Apple-specific meta tags for iOS web app experience -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <!-- Page title that appears in browser tab -->
     <title>Swift Task - Professional Task Management</title>
     
-    <!-- Bootstrap CSS for responsive design -->
+    <!-- ========================================
+         EXTERNAL CSS AND FONT RESOURCES
+         ======================================== -->
+    
+    <!-- Bootstrap 5 CSS - Provides responsive grid system and UI components -->
+    <!-- This gives us pre-built components like cards, buttons, modals, etc. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome for icons -->
+    <!-- Font Awesome 6 - Icon library for professional icons -->
+    <!-- Provides icons like fa-tasks, fa-user, fa-plus, etc. -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts for professional typography -->
+    <!-- Google Fonts - Inter font family for modern, clean typography -->
+    <!-- Inter is a professional font designed for user interfaces -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Custom CSS -->
+    <!-- Custom CSS file - Contains all our application-specific styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Login Screen -->
+    <!-- ========================================
+         LOGIN SCREEN SECTION
+         ======================================== -->
+    
+    <!-- Main login container - This is shown when user is not logged in -->
     <div id="loginScreen" class="login-container">
+        <!-- Bootstrap container for responsive layout -->
         <div class="container">
+            <!-- Bootstrap row with centering classes -->
+            <!-- justify-content-center: Centers content horizontally -->
+            <!-- align-items-center: Centers content vertically -->
+            <!-- min-vh-100: Makes row take full viewport height -->
             <div class="row justify-content-center align-items-center min-vh-100">
+                <!-- Bootstrap column with responsive breakpoints -->
+                <!-- col-md-6: Takes 6/12 columns on medium screens and up -->
+                <!-- col-lg-4: Takes 4/12 columns on large screens and up -->
                 <div class="col-md-6 col-lg-4">
+                    <!-- Login card with glassmorphism effect -->
                     <div class="login-card">
-                        <!-- Logo and Title -->
+                        <!-- ========================================
+                             LOGO AND TITLE SECTION
+                             ======================================== -->
+                        
+                        <!-- Centered content container -->
                         <div class="text-center mb-4">
+                            <!-- Logo container with gradient background -->
                             <div class="logo-container mb-3">
+                                <!-- Font Awesome task icon -->
                                 <i class="fas fa-tasks logo-icon"></i>
                             </div>
+                            
+                            <!-- Main application title -->
                             <h1 class="app-title">Swift Task</h1>
+                            
+                            <!-- Application subtitle -->
                             <p class="app-subtitle">Professional Task Management</p>
                         </div>
                         
-                        <!-- Login Form -->
+                        <!-- ========================================
+                             LOGIN FORM SECTION
+                             ======================================== -->
+                        
+                        <!-- Login form with ID for JavaScript targeting -->
                         <form id="loginForm">
+                            <!-- Username input group -->
                             <div class="mb-3">
+                                <!-- Label for username input -->
                                 <label for="username" class="form-label">Username</label>
+                                
+                                <!-- Bootstrap input group with icon -->
                                 <div class="input-group">
+                                    <!-- Input group prefix with user icon -->
                                     <span class="input-group-text">
                                         <i class="fas fa-user"></i>
                                     </span>
+                                    
+                                    <!-- Username input field -->
+                                    <!-- required: Makes field mandatory -->
                                     <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
                                 </div>
                             </div>
                             
+                            <!-- Login button - full width -->
                             <button type="submit" class="btn btn-primary w-100 login-btn">
+                                <!-- Login icon -->
                                 <i class="fas fa-sign-in-alt me-2"></i>
                                 Login
                             </button>
                         </form>
                         
-                        <!-- Demo Users Info -->
+                        <!-- ========================================
+                             DEMO USERS INFORMATION SECTION
+                             ======================================== -->
+                        
+                        <!-- Demo users info box -->
                         <div class="demo-info mt-4">
+                            <!-- Small text with demo user names -->
                             <small class="text-muted">
                                 <strong>Demo Users:</strong><br>
                                 • Ali Mehroz<br>
-                                • Saboor Malik<br>
-                                • John Doe
+                                • Abdul Rehman<br>
+                                • Elon Musk
                             </small>
                         </div>
                     </div>
@@ -66,27 +135,51 @@
         </div>
     </div>
 
-    <!-- Dashboard Screen -->
+    <!-- ========================================
+         DASHBOARD SCREEN SECTION
+         ======================================== -->
+    
+    <!-- Main dashboard container - Hidden by default, shown after login -->
     <div id="dashboardScreen" class="dashboard-container" style="display: none;">
-        <!-- Navigation Header -->
+        <!-- ========================================
+             NAVIGATION HEADER SECTION
+             ======================================== -->
+        
+        <!-- Bootstrap navbar with light theme -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <!-- Container for navbar content -->
             <div class="container-fluid">
+                <!-- Brand/logo section -->
                 <div class="navbar-brand d-flex align-items-center">
+                    <!-- Task icon with primary color -->
                     <i class="fas fa-tasks text-primary me-2"></i>
+                    <!-- Brand name with bold font -->
                     <span class="fw-bold">Swift Task</span>
                 </div>
                 
+                <!-- Navigation items on the right side -->
                 <div class="navbar-nav ms-auto">
+                    <!-- User dropdown menu -->
                     <div class="nav-item dropdown">
+                        <!-- Dropdown trigger with user icon and name -->
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <!-- User circle icon -->
                             <i class="fas fa-user-circle me-2"></i>
+                            <!-- Current user name (updated by JavaScript) -->
                             <span id="currentUser">User</span>
                         </a>
+                        
+                        <!-- Dropdown menu items -->
                         <ul class="dropdown-menu">
+                            <!-- Profile menu item -->
                             <li><a class="dropdown-item" href="#" id="profileBtn">
                                 <i class="fas fa-user me-2"></i>Profile
                             </a></li>
+                            
+                            <!-- Divider line -->
                             <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Logout menu item with danger color -->
                             <li><a class="dropdown-item text-danger" href="#" id="logoutBtn">
                                 <i class="fas fa-sign-out-alt me-2"></i>Logout
                             </a></li>
@@ -96,44 +189,83 @@
             </div>
         </nav>
 
-        <!-- Main Content -->
+        <!-- ========================================
+             MAIN CONTENT SECTION
+             ======================================== -->
+        
+        <!-- Main content container with top margin -->
         <div class="container-fluid mt-4">
-            <!-- Search and Add Board Section -->
+            <!-- ========================================
+                 SEARCH AND ADD BOARD SECTION
+                 ======================================== -->
+            
+            <!-- Row containing search and board creation -->
             <div class="row mb-4">
+                <!-- Full width column -->
                 <div class="col-12">
+                    <!-- Card container for search and add board -->
                     <div class="card">
+                        <!-- Card body with padding -->
                         <div class="card-body">
+                            <!-- Inner row for responsive layout -->
                             <div class="row">
-                                <!-- Search Section -->
-                                <div class="col-md-8">
-                                    <div class="d-flex align-items-center">
-                                        <h5 class="mb-0 me-3">
+                                <!-- ========================================
+                                     SEARCH SECTION
+                                     ======================================== -->
+                                
+                                <!-- Search section - takes 8 columns on large screens -->
+                                <div class="col-lg-8 col-md-12 mb-3 mb-md-0">
+                                    <!-- Search container with flexbox layout -->
+                                    <div class="search-container d-flex align-items-center flex-wrap">
+                                        <!-- Search section title -->
+                                        <h5 class="mb-0 me-3 mb-2 mb-md-0">
+                                            <!-- Search icon -->
                                             <i class="fas fa-search text-primary me-2"></i>
                                             Search
                                         </h5>
-                                        <div class="input-group me-2" style="max-width: 300px;">
+                                        
+                                        <!-- Search input group with responsive sizing -->
+                                        <div class="input-group" style="max-width: 400px; min-width: 280px;">
+                                            <!-- Search type dropdown (All, Boards, Folders, Tasks) -->
                                             <select class="form-select" id="searchType" style="max-width: 120px;">
                                                 <option value="all">All</option>
                                                 <option value="boards">Boards</option>
                                                 <option value="folders">Folders</option>
                                                 <option value="tasks">Tasks</option>
                                             </select>
+                                            
+                                            <!-- Search input field -->
                                             <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+                                            
+                                            <!-- Clear search button (hidden by default) -->
                                             <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn" style="display: none;">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Add Board Section -->
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center justify-content-end">
-                                        <h5 class="mb-0 me-3">
+                                
+                                <!-- ========================================
+                                     ADD BOARD SECTION
+                                     ======================================== -->
+                                
+                                <!-- Add board section - takes 4 columns on large screens -->
+                                <div class="col-lg-4 col-md-12">
+                                    <!-- Flex container for board creation -->
+                                    <div class="d-flex align-items-center justify-content-lg-end justify-content-start flex-wrap">
+                                        <!-- Add board section title -->
+                                        <h5 class="mb-0 me-3 mb-2 mb-md-0">
+                                            <!-- Plus circle icon -->
                                             <i class="fas fa-plus-circle text-primary me-2"></i>
                                             Create New Board
                                         </h5>
+                                        
+                                        <!-- Board name input group -->
                                         <div class="input-group" style="max-width: 300px;">
+                                            <!-- Board name input field -->
                                             <input type="text" class="form-control" id="boardNameInput" placeholder="Enter board name">
+                                            
+                                            <!-- Add board button -->
                                             <button class="btn btn-primary" type="button" id="addBoardBtn">
                                                 <i class="fas fa-plus me-1"></i>Add Board
                                             </button>
@@ -146,33 +278,56 @@
                 </div>
             </div>
 
-            <!-- Boards Display -->
+            <!-- ========================================
+                 BOARDS DISPLAY SECTION
+                 ======================================== -->
+            
+            <!-- Container where all boards will be dynamically added -->
             <div id="boardsContainer">
-                <!-- Boards will be dynamically added here -->
+                <!-- Boards will be dynamically added here by JavaScript -->
             </div>
         </div>
     </div>
 
-    <!-- Add Task Modal -->
+    <!-- ========================================
+         MODAL DIALOGS SECTION
+         ======================================== -->
+    
+    <!-- ========================================
+         ADD TASK MODAL
+         ======================================== -->
+    
+    <!-- Bootstrap modal for adding new tasks -->
     <div class="modal fade" id="addTaskModal" tabindex="-1">
+        <!-- Large modal dialog -->
         <div class="modal-dialog modal-lg">
+            <!-- Modal content container -->
             <div class="modal-content">
+                <!-- Modal header with title and close button -->
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="fas fa-plus-circle me-2"></i>
                         Add New Task
                     </h5>
+                    <!-- Close button (X) -->
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                
+                <!-- Modal body with form -->
                 <div class="modal-body">
+                    <!-- Task creation form -->
                     <form id="addTaskForm">
+                        <!-- First row: Task title and priority -->
                         <div class="row">
+                            <!-- Task title column (8/12 on medium screens) -->
                             <div class="col-md-8">
                                 <div class="mb-3">
                                     <label for="taskTitle" class="form-label">Task Title</label>
                                     <input type="text" class="form-control" id="taskTitle" required>
                                 </div>
                             </div>
+                            
+                            <!-- Priority column (4/12 on medium screens) -->
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="taskPriority" class="form-label">Priority</label>
@@ -186,13 +341,17 @@
                             </div>
                         </div>
                         
+                        <!-- Second row: Start date and time -->
                         <div class="row">
+                            <!-- Start date column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="startDate" class="form-label">Start Date</label>
                                     <input type="date" class="form-control" id="startDate" required>
                                 </div>
                             </div>
+                            
+                            <!-- Start time column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="startTime" class="form-label">Start Time</label>
@@ -201,13 +360,17 @@
                             </div>
                         </div>
 
+                        <!-- Third row: Due date and time -->
                         <div class="row">
+                            <!-- Due date column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="dueDate" class="form-label">Due Date</label>
                                     <input type="date" class="form-control" id="dueDate" required>
                                 </div>
                             </div>
+                            
+                            <!-- Due time column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="dueTime" class="form-label">Due Time</label>
@@ -216,14 +379,19 @@
                             </div>
                         </div>
                         
+                        <!-- Task description field -->
                         <div class="mb-3">
                             <label for="taskDescription" class="form-label">Description</label>
                             <textarea class="form-control" id="taskDescription" rows="3"></textarea>
                         </div>
                     </form>
                 </div>
+                
+                <!-- Modal footer with action buttons -->
                 <div class="modal-footer">
+                    <!-- Cancel button -->
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <!-- Save task button -->
                     <button type="button" class="btn btn-primary" id="saveTaskBtn">
                         <i class="fas fa-save me-1"></i>
                         Save Task
@@ -233,27 +401,44 @@
         </div>
     </div>
 
-    <!-- Edit Task Modal -->
+    <!-- ========================================
+         EDIT TASK MODAL
+         ======================================== -->
+    
+    <!-- Bootstrap modal for editing existing tasks -->
     <div class="modal fade" id="editTaskModal" tabindex="-1">
+        <!-- Large modal dialog -->
         <div class="modal-dialog modal-lg">
+            <!-- Modal content container -->
             <div class="modal-content">
+                <!-- Modal header with title and close button -->
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="fas fa-edit me-2"></i>
                         Edit Task
                     </h5>
+                    <!-- Close button (X) -->
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                
+                <!-- Modal body with form -->
                 <div class="modal-body">
+                    <!-- Task editing form -->
                     <form id="editTaskForm">
+                        <!-- Hidden field to store task ID being edited -->
                         <input type="hidden" id="editTaskId">
+                        
+                        <!-- First row: Task title and priority -->
                         <div class="row">
+                            <!-- Task title column -->
                             <div class="col-md-8">
                                 <div class="mb-3">
                                     <label for="editTaskTitle" class="form-label">Task Title</label>
                                     <input type="text" class="form-control" id="editTaskTitle" required>
                                 </div>
                             </div>
+                            
+                            <!-- Priority column -->
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="editTaskPriority" class="form-label">Priority</label>
@@ -267,13 +452,17 @@
                             </div>
                         </div>
                         
+                        <!-- Second row: Start date and time -->
                         <div class="row">
+                            <!-- Start date column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="editStartDate" class="form-label">Start Date</label>
                                     <input type="date" class="form-control" id="editStartDate" required>
                                 </div>
                             </div>
+                            
+                            <!-- Start time column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="editStartTime" class="form-label">Start Time</label>
@@ -282,13 +471,17 @@
                             </div>
                         </div>
 
+                        <!-- Third row: Due date and time -->
                         <div class="row">
+                            <!-- Due date column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="editDueDate" class="form-label">Due Date</label>
                                     <input type="date" class="form-control" id="editDueDate" required>
                                 </div>
                             </div>
+                            
+                            <!-- Due time column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="editDueTime" class="form-label">Due Time</label>
@@ -297,11 +490,13 @@
                             </div>
                         </div>
                         
+                        <!-- Task description field -->
                         <div class="mb-3">
                             <label for="editTaskDescription" class="form-label">Description</label>
                             <textarea class="form-control" id="editTaskDescription" rows="3"></textarea>
                         </div>
                         
+                        <!-- Edit limit warning alert -->
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
                             <strong>Edit Limit:</strong> You can edit this task 
@@ -309,8 +504,12 @@
                         </div>
                     </form>
                 </div>
+                
+                <!-- Modal footer with action buttons -->
                 <div class="modal-footer">
+                    <!-- Cancel button -->
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <!-- Update task button -->
                     <button type="button" class="btn btn-primary" id="updateTaskBtn">
                         <i class="fas fa-save me-1"></i>
                         Update Task
@@ -319,29 +518,46 @@
             </div>
         </div>
     </div>
-    <!-- Add Folder Modal -->
+    
+    <!-- ========================================
+         ADD FOLDER MODAL
+         ======================================== -->
+    
+    <!-- Bootstrap modal for adding new folders -->
     <div class="modal fade" id="addFolderModal" tabindex="-1" aria-labelledby="addFolderModalLabel" aria-hidden="true">
+        <!-- Standard modal dialog -->
         <div class="modal-dialog">
+            <!-- Modal content container -->
             <div class="modal-content">
+                <!-- Modal header with title and close button -->
                 <div class="modal-header">
                     <h5 class="modal-title" id="addFolderModalLabel">
                         <i class="fas fa-folder-plus me-2"></i>Add New Folder
                     </h5>
+                    <!-- Close button (X) -->
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                
+                <!-- Modal body with form -->
                 <div class="modal-body">
+                    <!-- Folder creation form -->
                     <form id="addFolderForm">
                         <div class="mb-3">
                             <label for="folderNameInput" class="form-label">Folder Name</label>
                             <input type="text" class="form-control" id="folderNameInput" placeholder="Enter folder name" required>
+                            <!-- Help text -->
                             <div class="form-text">Choose a descriptive name for your folder</div>
                         </div>
                     </form>
                 </div>
+                
+                <!-- Modal footer with action buttons -->
                 <div class="modal-footer">
+                    <!-- Cancel button -->
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>Cancel
                     </button>
+                    <!-- Create folder button -->
                     <button type="button" class="btn btn-primary" id="saveFolderBtn">
                         <i class="fas fa-folder-plus me-1"></i>Create Folder
                     </button>
@@ -350,39 +566,59 @@
         </div>
     </div>
 
-    <!-- Profile Modal -->
-    <div class="modal fade" id="profileModal" tabindex="-1">
+    <!-- ========================================
+         PROFILE MODAL
+         ======================================== -->
+    
+    <!-- Bootstrap modal for user profile display -->
+    <div class="modal fade profile-modal" id="profileModal" tabindex="-1">
+        <!-- Standard modal dialog -->
         <div class="modal-dialog">
+            <!-- Modal content container -->
             <div class="modal-content">
+                <!-- Modal header with title and close button -->
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="fas fa-user me-2"></i>
                         User Profile
                     </h5>
+                    <!-- Close button (X) -->
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                
+                <!-- Modal body with profile content -->
                 <div class="modal-body">
+                    <!-- Profile header with avatar and name -->
                     <div class="text-center mb-4">
+                        <!-- Profile avatar with gradient background -->
                         <div class="profile-avatar mb-3">
                             <i class="fas fa-user-circle fa-4x text-primary"></i>
                         </div>
+                        <!-- Username (updated by JavaScript) -->
                         <h4 id="profileUsername">User</h4>
+                        <!-- User description -->
                         <p class="text-muted">Task Management User</p>
                     </div>
                     
+                    <!-- Statistics row with 3 columns -->
                     <div class="row text-center">
+                        <!-- Total tasks statistic -->
                         <div class="col-4">
                             <div class="stat-card">
                                 <h3 id="totalTasks">0</h3>
                                 <small class="text-muted">Total Tasks</small>
                             </div>
                         </div>
+                        
+                        <!-- Completed tasks statistic -->
                         <div class="col-4">
                             <div class="stat-card">
                                 <h3 id="completedTasks">0</h3>
                                 <small class="text-muted">Completed</small>
                             </div>
                         </div>
+                        
+                        <!-- Pending tasks statistic -->
                         <div class="col-4">
                             <div class="stat-card">
                                 <h3 id="pendingTasks">0</h3>
@@ -395,11 +631,19 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and Popper.js -->
+    <!-- ========================================
+         JAVASCRIPT RESOURCES SECTION
+         ======================================== -->
+    
+    <!-- Bootstrap JS and Popper.js - Required for Bootstrap components -->
+    <!-- Popper.js: Handles positioning of dropdowns, tooltips, etc. -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    
+    <!-- Bootstrap JavaScript: Provides interactive functionality -->
+    <!-- Handles modals, dropdowns, tooltips, and other Bootstrap components -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     
-    <!-- Custom JavaScript -->
+    <!-- Custom JavaScript file - Contains all our application logic -->
     <script src="script.js"></script>
 </body>
 </html>

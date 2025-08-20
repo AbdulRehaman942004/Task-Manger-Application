@@ -6,7 +6,21 @@
  * This JavaScript file contains all the functionality for the Swift Task application
  * including user management, task management, boards, folders, and local storage.
  * 
- * Features:
+ * APPLICATION OVERVIEW:
+ * This is a professional task management system that allows users to:
+ * - Create and manage boards (like project categories)
+ * - Add folders within boards (like sub-categories)
+ * - Create tasks within folders with priorities and deadlines
+ * - Track task status and edit limits
+ * - Search through all content
+ * - View user statistics
+ * 
+ * DATA STRUCTURE:
+ * - Boards contain folders
+ * - Folders contain tasks
+ * - Tasks have priorities, status, dates, and edit limits
+ * 
+ * TECHNICAL FEATURES:
  * - User authentication (simple username-based)
  * - Board and folder management
  * - Task creation, editing, and deletion
@@ -17,84 +31,151 @@
  * - Local storage for data persistence
  * - Professional notifications
  * - Responsive design support
+ * - Search functionality with highlighting
+ * - Collapsible UI with state persistence
  */
 
 // ========================================
 // GLOBAL VARIABLES AND CONFIGURATION
 // ========================================
 
-// Static user data - predefined users for the application
+/**
+ * STATIC USER DATA
+ * These are the predefined users that can log into the application.
+ * In a real application, this would come from a database.
+ * Each user has:
+ * - username: Display name for the user
+ * - id: Unique identifier for the user
+ * - joinDate: When the user was created (for demo purposes)
+ */
 const STATIC_USERS = [
     {
-        username: 'Ali Mehroz',
-        id: 'user_1',
-        joinDate: '2024-01-15'
+        username: 'Ali Mehroz',    // First demo user
+        id: 'user_1',              // Unique user ID
+        joinDate: '2024-01-15'     // Demo join date
     },
     {
-        username: 'Saboor Malik',
-        id: 'user_2',
-        joinDate: '2024-02-20'
+        username: 'Abdul Rehman',  // Second demo user
+        id: 'user_2',              // Unique user ID
+        joinDate: '2024-02-20'     // Demo join date
     },
     {
-        username: 'John Doe',
-        id: 'user_3',
-        joinDate: '2024-03-10'
+        username: 'Elon Musk',      // Third demo user
+        id: 'user_3',              // Unique user ID
+        joinDate: '2024-03-10'     // Demo join date
     }
 ];
 
-// Application state
+/**
+ * APPLICATION STATE VARIABLES
+ * These variables track the current state of the application
+ */
+
+// Currently logged-in user (null when no user is logged in)
 let currentUser = null;
+
+// Current user's data structure - contains all boards, folders, and tasks
+// This is what gets saved to localStorage
 let currentData = {
-    boards: []
+    boards: []  // Array of board objects, each containing folders and tasks
 };
 
-// Track open/closed state of boards and folders
+/**
+ * UI STATE TRACKING
+ * These Sets track which boards and folders are currently expanded/collapsed
+ * This ensures the UI state persists when the dashboard is re-rendered
+ */
+
+// Set of board IDs that are currently expanded (open)
 let openBoards = new Set();
+
+// Set of folder IDs that are currently expanded (open)
 let openFolders = new Set();
 
-// DOM Elements
-const loginScreen = document.getElementById('loginScreen');
-const dashboardScreen = document.getElementById('dashboardScreen');
-const loginForm = document.getElementById('loginForm');
-const usernameInput = document.getElementById('username');
-const currentUserSpan = document.getElementById('currentUser');
-const logoutBtn = document.getElementById('logoutBtn');
-const profileBtn = document.getElementById('profileBtn');
+/**
+ * DOM ELEMENT REFERENCES
+ * These constants store references to HTML elements that we need to interact with
+ * We get these references once when the script loads for better performance
+ */
 
-// Board elements
-const boardNameInput = document.getElementById('boardNameInput');
-const addBoardBtn = document.getElementById('addBoardBtn');
-const boardsContainer = document.getElementById('boardsContainer');
+// ========================================
+// SCREEN ELEMENTS
+// ========================================
 
-// Search elements
-const searchInput = document.getElementById('searchInput');
-const searchType = document.getElementById('searchType');
-const clearSearchBtn = document.getElementById('clearSearchBtn');
+// Main screen containers
+const loginScreen = document.getElementById('loginScreen');        // Login page container
+const dashboardScreen = document.getElementById('dashboardScreen'); // Dashboard page container
 
-// Modal elements
-const addTaskModal = new bootstrap.Modal(document.getElementById('addTaskModal'));
-const editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
-const addFolderModal = new bootstrap.Modal(document.getElementById('addFolderModal'));
-const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+// ========================================
+// LOGIN FORM ELEMENTS
+// ========================================
+
+const loginForm = document.getElementById('loginForm');     // Login form element
+const usernameInput = document.getElementById('username');  // Username input field
+
+// ========================================
+// NAVIGATION ELEMENTS
+// ========================================
+
+const currentUserSpan = document.getElementById('currentUser'); // User name in navbar
+const logoutBtn = document.getElementById('logoutBtn');         // Logout button
+const profileBtn = document.getElementById('profileBtn');       // Profile button
+
+// ========================================
+// BOARD MANAGEMENT ELEMENTS
+// ========================================
+
+const boardNameInput = document.getElementById('boardNameInput'); // Board name input field
+const addBoardBtn = document.getElementById('addBoardBtn');       // Add board button
+const boardsContainer = document.getElementById('boardsContainer'); // Container where boards are displayed
+
+// ========================================
+// SEARCH FUNCTIONALITY ELEMENTS
+// ========================================
+
+const searchInput = document.getElementById('searchInput');       // Search text input
+const searchType = document.getElementById('searchType');         // Search type dropdown (All, Boards, etc.)
+const clearSearchBtn = document.getElementById('clearSearchBtn'); // Clear search button
+
+// ========================================
+// MODAL DIALOG REFERENCES
+// ========================================
+
+// Bootstrap modal instances - these are JavaScript objects that control the modals
+const addTaskModal = new bootstrap.Modal(document.getElementById('addTaskModal'));     // Add task modal
+const editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));   // Edit task modal
+const addFolderModal = new bootstrap.Modal(document.getElementById('addFolderModal')); // Add folder modal
+const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));     // Profile modal
 
 // ========================================
 // UTILITY FUNCTIONS
 // ========================================
 
 /**
- * Shows a notification message to the user
- * @param {string} message - The message to display
- * @param {string} type - The type of notification (success, error, info)
- * @param {number} duration - Duration in milliseconds (default: 3000)
+ * NOTIFICATION SYSTEM
+ * This function creates and displays professional-looking notifications to the user
+ * 
+ * @param {string} message - The text message to display to the user
+ * @param {string} type - The type of notification: 'success', 'error', or 'info'
+ * @param {number} duration - How long to show the notification in milliseconds (default: 3000ms = 3 seconds)
+ * 
+ * USAGE EXAMPLES:
+ * - showNotification('Task created successfully!', 'success')
+ * - showNotification('Please enter a valid username', 'error')
+ * - showNotification('Loading data...', 'info', 5000)
  */
 function showNotification(message, type = 'info', duration = 3000) {
-    // Remove existing notifications
+    // STEP 1: Clean up any existing notifications
+    // This prevents multiple notifications from stacking up
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
 
-    // Create new notification
+    // STEP 2: Create the notification element
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
+    notification.className = `notification ${type}`; // CSS classes for styling
+    
+    // STEP 3: Set the notification content with appropriate icon
+    // The icon changes based on the notification type
     notification.innerHTML = `
         <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
         ${message}

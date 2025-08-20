@@ -561,6 +561,36 @@ body {
    RESPONSIVE DESIGN
    ======================================== */
 
+/* Large Tablets and Small Laptops */
+@media (max-width: 1024px) {
+    .container-fluid {
+        padding: 15px;
+    }
+    
+    .board-header h3 {
+        font-size: 1.5rem;
+    }
+    
+    .folder-header h5 {
+        font-size: 1.1rem;
+    }
+    
+    .task-title {
+        font-size: 1rem;
+    }
+    
+    .task-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .task-actions .btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
     .login-card {
         padding: 30px 20px;
@@ -571,25 +601,107 @@ body {
         font-size: 2rem;
     }
     
-    .task-header {
-        flex-direction: column;
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .navbar-nav {
+        flex-direction: row;
         gap: 10px;
     }
     
+    .navbar-nav .btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+    
+    .board-header {
+        padding: 15px;
+    }
+    
+    .board-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .folder-header {
+        padding: 12px 15px;
+    }
+    
+    .folder-header h5 {
+        font-size: 1rem;
+    }
+    
+    .task-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
     .task-actions {
-        justify-content: center;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    
+    .task-actions .btn {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        min-width: auto;
     }
     
     .task-dates {
         flex-direction: column;
         gap: 5px;
+        align-items: flex-start;
+    }
+    
+    .task-dates span {
+        font-size: 0.85rem;
     }
     
     .board-actions, .folder-actions {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .board-actions .btn, .folder-actions .btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+    
+    .modal-dialog {
+        margin: 20px 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    .modal-body {
+        padding: 20px 15px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+    
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        font-size: 0.9rem;
+        padding: 12px 15px;
     }
 }
 
+/* Mobile Phones */
 @media (max-width: 576px) {
     .container-fluid {
         padding: 10px;
@@ -599,12 +711,502 @@ body {
         padding: 15px;
     }
     
-    .task-item {
+    .login-container {
         padding: 15px;
+    }
+    
+    .login-card {
+        padding: 25px 15px;
+        margin: 5px;
+    }
+    
+    .app-title {
+        font-size: 1.8rem;
+    }
+    
+    .app-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .navbar {
+        padding: 10px 15px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-nav {
+        gap: 8px;
+    }
+    
+    .navbar-nav .btn {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+    }
+    
+    .board-container {
+        margin-bottom: 15px;
+    }
+    
+    .board-header {
+        padding: 12px;
+    }
+    
+    .board-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .board-header .d-flex {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .board-header .btn {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+    }
+    
+    .folder-section {
+        margin-bottom: 10px;
+    }
+    
+    .folder-header {
+        padding: 10px 12px;
+    }
+    
+    .folder-header h5 {
+        font-size: 0.95rem;
+    }
+    
+    .folder-header .d-flex {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+    
+    .folder-header .btn {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    .task-item {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .task-header {
+        gap: 8px;
+    }
+    
+    .task-title {
+        font-size: 0.95rem;
+    }
+    
+    .task-priority {
+        font-size: 0.75rem;
+        padding: 3px 6px;
+    }
+    
+    .task-description {
+        font-size: 0.85rem;
+        margin: 8px 0;
+    }
+    
+    .task-dates {
+        gap: 4px;
+    }
+    
+    .task-dates span {
+        font-size: 0.8rem;
+    }
+    
+    .task-countdown {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+    }
+    
+    .task-actions {
+        gap: 4px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .task-actions .btn {
+        font-size: 0.7rem;
+        padding: 6px 8px;
+        margin: 2px 0;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .task-status {
+        font-size: 0.7rem;
+        padding: 4px 6px;
+        margin: 2px 0;
+    }
+    
+    .modal-dialog {
+        margin: 10px 5px;
+        max-width: calc(100% - 10px);
+    }
+    
+    .modal-header {
+        padding: 15px;
+    }
+    
+    .modal-title {
+        font-size: 1.1rem;
+    }
+    
+    .modal-body {
+        padding: 15px 12px;
+    }
+    
+    .modal-footer {
+        padding: 12px 15px;
+    }
+    
+    .form-group {
+        margin-bottom: 12px;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 5px;
+    }
+    
+    .form-control {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+    }
+    
+    .form-select {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+    }
+    
+    .btn {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+    
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+    }
+    
+    .notification {
+        top: 5px;
+        right: 5px;
+        left: 5px;
+        font-size: 0.85rem;
+        padding: 10px 12px;
+    }
+    
+    /* Search bar responsive */
+    .search-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .search-container .input-group {
+        width: 100%;
+    }
+    
+    #searchType {
+        min-width: 100px;
+    }
+    
+    #searchInput {
+        flex: 1;
+    }
+    
+    /* Profile modal responsive */
+.profile-stats {
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.profile-stat {
+    padding: 15px;
+}
+
+.profile-stat h4 {
+    font-size: 1.5rem;
+}
+
+.profile-stat p {
+    font-size: 0.85rem;
+}
+
+/* Profile modal responsive improvements */
+@media (max-width: 576px) {
+    .profile-modal .row {
+        flex-direction: column;
+    }
+    
+    .profile-modal .col-4 {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .profile-modal .stat-card {
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .profile-modal .stat-card h3 {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+    
+    .profile-modal .stat-card small {
+        font-size: 0.8rem;
+    }
+    
+    .profile-modal .profile-avatar {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .profile-modal .profile-avatar i {
+        font-size: 2.5rem !important;
+    }
+    
+    .profile-modal h4 {
+        font-size: 1.3rem;
+    }
+    
+    .profile-modal p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .profile-modal .stat-card {
+        padding: 12px;
+    }
+    
+    .profile-modal .stat-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .profile-modal .stat-card small {
+        font-size: 0.75rem;
+    }
+    
+    .profile-modal .profile-avatar {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .profile-modal .profile-avatar i {
+        font-size: 2rem !important;
+    }
+    
+    .profile-modal h4 {
+        font-size: 1.2rem;
+    }
+}
+}
+
+/* Extra Small Mobile Phones */
+@media (max-width: 375px) {
+    .login-card {
+        padding: 20px 12px;
+    }
+    
+    .app-title {
+        font-size: 1.6rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .board-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .folder-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .task-title {
+        font-size: 0.9rem;
+    }
+    
+    .task-actions .btn {
+        font-size: 0.65rem;
+        padding: 4px 6px;
+    }
+    
+    .modal-dialog {
+        margin: 5px;
+    }
+    
+    .modal-body {
+        padding: 12px 10px;
+    }
+    
+    .form-control {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+    }
+    
+    .btn {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+    
+    /* Improve very small screen layout */
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container .input-group {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .board-header .d-flex {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .folder-header .d-flex {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .task-actions {
+        flex-direction: column;
+        gap: 3px;
+    }
+    
+    .task-actions .btn {
+        width: 100%;
+        justify-content: center;
+        margin: 1px 0;
+    }
+}
+
+/* Ultra Small Mobile Phones */
+@media (max-width: 320px) {
+    .login-card {
+        padding: 15px 10px;
+    }
+    
+    .app-title {
+        font-size: 1.4rem;
+    }
+    
+    .navbar {
+        padding: 8px 10px;
+    }
+    
+    .navbar-brand {
+        font-size: 0.9rem;
+    }
+    
+    .container-fluid {
+        padding: 8px;
+    }
+    
+    .card-body {
+        padding: 12px;
+    }
+    
+    .board-header {
+        padding: 10px;
+    }
+    
+    .board-header h3 {
+        font-size: 1rem;
+    }
+    
+    .folder-header {
+        padding: 8px 10px;
+    }
+    
+    .folder-header h5 {
+        font-size: 0.85rem;
+    }
+    
+    .task-item {
+        padding: 10px;
+    }
+    
+    .task-title {
+        font-size: 0.85rem;
+    }
+    
+    .task-description {
+        font-size: 0.8rem;
+    }
+    
+    .task-dates span {
+        font-size: 0.75rem;
+    }
+    
+    .task-countdown {
+        font-size: 0.75rem;
+        padding: 5px 6px;
+    }
+    
+    .modal-dialog {
+        margin: 3px;
+    }
+    
+    .modal-body {
+        padding: 10px 8px;
+    }
+    
+    .form-control {
+        font-size: 0.75rem;
+        padding: 6px 8px;
+    }
+    
+    .btn {
+        font-size: 0.75rem;
+        padding: 6px 8px;
+    }
+}
+
+/* Landscape orientation for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .login-container {
+        padding: 10px;
+    }
+    
+    .login-card {
+        padding: 20px;
+        max-width: 350px;
+    }
+    
+    .navbar {
+        padding: 8px 15px;
+    }
+    
+    .board-header {
+        padding: 10px;
+    }
+    
+    .folder-header {
+        padding: 8px 10px;
+    }
+    
+    .task-item {
+        padding: 10px;
     }
     
     .modal-dialog {
         margin: 10px;
+        max-height: 90vh;
+        overflow-y: auto;
     }
 }
 
@@ -651,6 +1253,54 @@ body {
 
 .pulse {
     animation: pulse 2s infinite;
+}
+
+/* ========================================
+   MOBILE TOUCH IMPROVEMENTS
+   ======================================== */
+
+/* Improve touch targets for mobile */
+@media (max-width: 768px) {
+    .btn {
+        min-height: 44px; /* Apple's recommended minimum touch target */
+        min-width: 44px;
+    }
+    
+    .btn-sm {
+        min-height: 36px;
+        min-width: 36px;
+    }
+    
+    .form-control, .form-select {
+        min-height: 44px;
+    }
+    
+    /* Improve tap targets */
+    .board-header, .folder-header {
+        min-height: 44px;
+    }
+    
+    .task-status {
+        min-height: 36px;
+        min-width: 60px;
+    }
+    
+    /* Better spacing for touch */
+    .task-actions .btn {
+        margin: 4px 0;
+        padding: 8px 12px;
+    }
+    
+    /* Improve modal touch targets */
+    .modal-header .btn-close {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 12px;
+    }
+    
+    .modal-footer .btn {
+        min-width: 80px;
+    }
 }
 
 /* ========================================
