@@ -740,3 +740,41 @@ body {
         opacity: 1;
     }
 }
+
+/* ========================================
+   SEARCH FUNCTIONALITY STYLES
+   ======================================== */
+
+/* Search highlight styles */
+.search-highlight {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Search input group styles */
+#searchType {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+#searchInput {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+#clearSearchBtn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+}
+
+/* Search results styling */
+.search-results {
+    border-left: 3px solid #4f46e5;
+    background: rgba(79, 70, 229, 0.05);
+}

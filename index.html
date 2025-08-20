@@ -98,21 +98,47 @@
 
         <!-- Main Content -->
         <div class="container-fluid mt-4">
-            <!-- Add Board Section -->
+            <!-- Search and Add Board Section -->
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <h5 class="mb-0 me-3">
-                                    <i class="fas fa-plus-circle text-primary me-2"></i>
-                                    Create New Board
-                                </h5>
-                                <div class="input-group" style="max-width: 400px;">
-                                    <input type="text" class="form-control" id="boardNameInput" placeholder="Enter board name">
-                                    <button class="btn btn-primary" type="button" id="addBoardBtn">
-                                        <i class="fas fa-plus me-1"></i>Add Board
-                                    </button>
+                            <div class="row">
+                                <!-- Search Section -->
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="mb-0 me-3">
+                                            <i class="fas fa-search text-primary me-2"></i>
+                                            Search
+                                        </h5>
+                                        <div class="input-group me-2" style="max-width: 300px;">
+                                            <select class="form-select" id="searchType" style="max-width: 120px;">
+                                                <option value="all">All</option>
+                                                <option value="boards">Boards</option>
+                                                <option value="folders">Folders</option>
+                                                <option value="tasks">Tasks</option>
+                                            </select>
+                                            <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+                                            <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn" style="display: none;">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Add Board Section -->
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <h5 class="mb-0 me-3">
+                                            <i class="fas fa-plus-circle text-primary me-2"></i>
+                                            Create New Board
+                                        </h5>
+                                        <div class="input-group" style="max-width: 300px;">
+                                            <input type="text" class="form-control" id="boardNameInput" placeholder="Enter board name">
+                                            <button class="btn btn-primary" type="button" id="addBoardBtn">
+                                                <i class="fas fa-plus me-1"></i>Add Board
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -66,6 +66,11 @@ const boardNameInput = document.getElementById('boardNameInput');
 const addBoardBtn = document.getElementById('addBoardBtn');
 const boardsContainer = document.getElementById('boardsContainer');
 
+// Search elements
+const searchInput = document.getElementById('searchInput');
+const searchType = document.getElementById('searchType');
+const clearSearchBtn = document.getElementById('clearSearchBtn');
+
 // Modal elements
 const addTaskModal = new bootstrap.Modal(document.getElementById('addTaskModal'));
 const editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
@@ -196,6 +201,122 @@ function loadData(userId) {
         showNotification('Error loading data', 'error');
         return { boards: [] };
     }
+}
+
+/**
+ * Searches through boards, folders, and tasks based on search criteria
+ * @param {string} searchTerm - Search term
+ * @param {string} searchType - Type of search (all, boards, folders, tasks)
+ * @returns {object} Filtered data and items to expand
+ */
+function searchData(searchTerm, searchType) {
+    if (!searchTerm.trim()) {
+        return { data: currentData, expandBoards: [], expandFolders: [] };
+    }
+
+    const term = searchTerm.toLowerCase().trim();
+    const filteredData = { boards: [] };
+    const expandBoards = [];
+    const expandFolders = [];
+
+    currentData.boards.forEach(board => {
+        let boardMatches = false;
+        let filteredBoard = { ...board, folders: [] };
+
+        // Search in board name
+        if (searchType === 'all' || searchType === 'boards') {
+            if (board.name.toLowerCase().includes(term)) {
+                boardMatches = true;
+                // Don't automatically expand board when searching for it
+                // Only include folders if they have matching content
+                if (board.folders && board.folders.length > 0) {
+                    board.folders.forEach(folder => {
+                        filteredBoard.folders.push({ ...folder, tasks: folder.tasks || [] });
+                    });
+                }
+            }
+        }
+
+        // Search in folders
+        if (board.folders && board.folders.length > 0) {
+            board.folders.forEach(folder => {
+                let folderMatches = false;
+                let filteredFolder = { ...folder, tasks: [] };
+
+                // Search in folder name
+                if (searchType === 'all' || searchType === 'folders') {
+                    if (folder.name.toLowerCase().includes(term)) {
+                        folderMatches = true;
+                        expandBoards.push(board.id);
+                        expandFolders.push(folder.id);
+                        // If folder matches, include ALL tasks in that folder
+                        if (folder.tasks && folder.tasks.length > 0) {
+                            folder.tasks.forEach(task => {
+                                filteredFolder.tasks.push(task);
+                            });
+                        }
+                    }
+                }
+
+                // Search in tasks (only if not already matched by folder name)
+                if (!folderMatches && folder.tasks && folder.tasks.length > 0) {
+                    folder.tasks.forEach(task => {
+                        let taskMatches = false;
+
+                        if (searchType === 'all' || searchType === 'tasks') {
+                            // Search in task title, description, priority, status
+                            if (task.title.toLowerCase().includes(term) ||
+                                (task.description && task.description.toLowerCase().includes(term)) ||
+                                task.priority.toLowerCase().includes(term) ||
+                                task.status.toLowerCase().includes(term)) {
+                                taskMatches = true;
+                            }
+                        }
+
+                        if (taskMatches) {
+                            filteredFolder.tasks.push(task);
+                            folderMatches = true;
+                            // If task matches, expand both board and folder
+                            expandBoards.push(board.id);
+                            expandFolders.push(folder.id);
+                        }
+                    });
+                }
+
+                if (folderMatches) {
+                    filteredBoard.folders.push(filteredFolder);
+                    boardMatches = true;
+                }
+            });
+        }
+
+        if (boardMatches) {
+            filteredData.boards.push(filteredBoard);
+        }
+    });
+
+    // Remove duplicates from expand arrays
+    const uniqueExpandBoards = [...new Set(expandBoards)];
+    const uniqueExpandFolders = [...new Set(expandFolders)];
+
+    return { 
+        data: filteredData, 
+        expandBoards: uniqueExpandBoards, 
+        expandFolders: uniqueExpandFolders 
+    };
+}
+
+/**
+ * Highlights search terms in text
+ * @param {string} text - Text to highlight
+ * @param {string} searchTerm - Search term to highlight
+ * @returns {string} HTML with highlighted text
+ */
+function highlightSearchTerm(text, searchTerm) {
+    if (!searchTerm.trim()) return text;
+    
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<mark class="search-highlight">$1</mark>');
 }
 
 // ========================================
@@ -699,23 +820,58 @@ function renderDashboard() {
     if (window.isRendering) return;
     window.isRendering = true;
 
+    // Get search term and type
+    const searchTerm = searchInput.value.trim();
+    const searchType = document.getElementById('searchType').value;
+    
+    // Get data to render (original or filtered)
+    let dataToRender;
+    let expandBoards = [];
+    let expandFolders = [];
+    
+    if (searchTerm) {
+        const searchResult = searchData(searchTerm, searchType);
+        dataToRender = searchResult.data;
+        expandBoards = searchResult.expandBoards;
+        expandFolders = searchResult.expandFolders;
+        
+        // Update open states for search results
+        expandBoards.forEach(boardId => openBoards.add(boardId));
+        expandFolders.forEach(folderId => openFolders.add(folderId));
+    } else {
+        dataToRender = currentData;
+    }
+
     // Use requestAnimationFrame for smooth rendering
     requestAnimationFrame(() => {
         boardsContainer.innerHTML = '';
 
-        if (currentData.boards.length === 0) {
-            boardsContainer.innerHTML = `
-                <div class="text-center py-5">
-                    <i class="fas fa-columns fa-3x text-muted mb-3"></i>
-                    <h4 class="text-muted">No boards created yet</h4>
-                    <p class="text-muted">Create your first board to get started!</p>
-                </div>
-            `;
+        if (dataToRender.boards.length === 0) {
+            if (searchTerm) {
+                boardsContainer.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No results found</h4>
+                        <p class="text-muted">No ${searchType === 'all' ? 'items' : searchType} match "${searchTerm}"</p>
+                        <button class="btn btn-outline-primary" onclick="clearSearch()">
+                            <i class="fas fa-times me-1"></i>Clear Search
+                        </button>
+                    </div>
+                `;
+            } else {
+                boardsContainer.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-columns fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No boards created yet</h4>
+                        <p class="text-muted">Create your first board to get started!</p>
+                    </div>
+                `;
+            }
             window.isRendering = false;
             return;
         }
 
-        currentData.boards.forEach(board => {
+        dataToRender.boards.forEach(board => {
             const boardElement = document.createElement('div');
             boardElement.className = 'board-container fade-in';
             
@@ -728,7 +884,7 @@ function renderDashboard() {
                                 <div>
                                     <h3 class="mb-0">
                                         <i class="fas fa-columns me-2"></i>
-                                        ${board.name}
+                                        ${highlightSearchTerm(board.name, searchTerm)}
                                     </h3>
                                     <small class="opacity-75">
                                         ${board.folders ? board.folders.length : 0} folders, 
@@ -747,7 +903,7 @@ function renderDashboard() {
                         </div>
                     </div>
                     <div class="board-content" id="board-content-${board.id}" style="display: ${openBoards.has(board.id) ? 'block' : 'none'};">
-                        ${renderBoardFolders(board)}
+                        ${renderBoardFolders(board, searchTerm)}
                     </div>
                 </div>
             `;
@@ -762,9 +918,10 @@ function renderDashboard() {
 /**
  * Renders folders within a board
  * @param {object} board - Board object
+ * @param {string} searchTerm - Search term for highlighting
  * @returns {string} HTML string for folders
  */
-function renderBoardFolders(board) {
+function renderBoardFolders(board, searchTerm = '') {
     const folders = board.folders || [];
     
     if (folders.length === 0) {
@@ -788,7 +945,7 @@ function renderBoardFolders(board) {
                         <div>
                             <h5 class="mb-0">
                                 <i class="fas fa-folder me-2"></i>
-                                ${folder.name}
+                                ${highlightSearchTerm(folder.name, searchTerm)}
                             </h5>
                             <small class="text-muted">
                                 ${folder.tasks ? folder.tasks.length : 0} tasks
@@ -806,7 +963,7 @@ function renderBoardFolders(board) {
                 </div>
             </div>
             <div class="folder-tasks" id="folder-tasks-${folder.id}" style="display: ${openFolders.has(folder.id) ? 'block' : 'none'};">
-                ${renderFolderTasks(folder)}
+                ${renderFolderTasks(folder, searchTerm)}
             </div>
         </div>
     `).join('');
@@ -815,9 +972,10 @@ function renderBoardFolders(board) {
 /**
  * Renders tasks within a folder
  * @param {object} folder - Folder object
+ * @param {string} searchTerm - Search term for highlighting
  * @returns {string} HTML string for tasks
  */
-function renderFolderTasks(folder) {
+function renderFolderTasks(folder, searchTerm = '') {
     const tasks = folder.tasks || [];
     
     if (tasks.length === 0) {
@@ -874,8 +1032,8 @@ function renderFolderTasks(folder) {
             <div class="task-item priority-${task.priority} fade-in" data-task-id="${task.id}">
                 <div class="task-header">
                     <div>
-                        <div class="task-title">${task.title}</div>
-                        <span class="task-priority priority-${task.priority}">${task.priority}</span>
+                        <div class="task-title">${highlightSearchTerm(task.title, searchTerm)}</div>
+                        <span class="task-priority priority-${task.priority}">${highlightSearchTerm(task.priority, searchTerm)}</span>
                     </div>
                     <div class="text-end">
                         <small class="text-muted">Created: ${formatDate(task.createdAt)}</small>
@@ -888,19 +1046,19 @@ function renderFolderTasks(folder) {
                     <span><i class="fas fa-flag-checkered me-1"></i> Due: ${formatDateTime(task.dueDate, task.dueTime)}</span>
                 </div>
                 
-                ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
+                ${task.description ? `<div class="task-description">${highlightSearchTerm(task.description, searchTerm)}</div>` : ''}
                 
                 ${countdownText}
                 
                 <div class="task-actions">
                     <button class="task-status status-${task.status}" onclick="changeTaskStatus('${task.id}', 'pending')">
-                        ${task.status === 'pending' ? '<i class="fas fa-check me-1"></i>' : ''}Pending
+                        ${task.status === 'pending' ? '<i class="fas fa-check me-1"></i>' : ''}${highlightSearchTerm('Pending', searchTerm)}
                     </button>
                     <button class="task-status status-${task.status}" onclick="changeTaskStatus('${task.id}', 'active')">
-                        ${task.status === 'active' ? '<i class="fas fa-check me-1"></i>' : ''}Active
+                        ${task.status === 'active' ? '<i class="fas fa-check me-1"></i>' : ''}${highlightSearchTerm('Active', searchTerm)}
                     </button>
                     <button class="task-status status-${task.status}" onclick="changeTaskStatus('${task.id}', 'completed')">
-                        ${task.status === 'completed' ? '<i class="fas fa-check me-1"></i>' : ''}Completed
+                        ${task.status === 'completed' ? '<i class="fas fa-check me-1"></i>' : ''}${highlightSearchTerm('Completed', searchTerm)}
                     </button>
                     <button class="btn btn-info btn-sm" onclick="editTask('${task.id}')" ${task.editCount >= 3 ? 'disabled' : ''}>
                         <i class="fas fa-edit me-1"></i>Update Task
@@ -1070,6 +1228,58 @@ document.getElementById('folderNameInput').addEventListener('keypress', function
         createFolder();
     }
 });
+
+// Search functionality with debouncing
+let searchTimeout;
+let previousSearchTerm = '';
+searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        const currentSearchTerm = searchInput.value.trim();
+        
+        // If search term was removed (cleared), close all accordions
+        if (previousSearchTerm && !currentSearchTerm) {
+            openBoards.clear();
+            openFolders.clear();
+        }
+        
+        previousSearchTerm = currentSearchTerm;
+        renderDashboard();
+        updateClearSearchButton();
+    }, 300); // 300ms delay for better performance
+});
+
+searchType.addEventListener('change', function() {
+    renderDashboard();
+});
+
+clearSearchBtn.addEventListener('click', clearSearch);
+
+/**
+ * Clears the search and resets the view
+ */
+function clearSearch() {
+    searchInput.value = '';
+    searchType.value = 'all';
+    clearSearchBtn.style.display = 'none';
+    
+    // Reset open states when clearing search - close all accordions
+    openBoards.clear();
+    openFolders.clear();
+    
+    renderDashboard();
+}
+
+/**
+ * Updates the clear search button visibility
+ */
+function updateClearSearchButton() {
+    if (searchInput.value.trim()) {
+        clearSearchBtn.style.display = 'block';
+    } else {
+        clearSearchBtn.style.display = 'none';
+    }
+}
 
 // Set default dates for task forms
 document.addEventListener('DOMContentLoaded', function() {
