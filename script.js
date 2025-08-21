@@ -48,6 +48,7 @@
  * - id: Unique identifier for the user
  * - joinDate: When the user was created (for demo purposes)
  */
+
 const STATIC_USERS = [
     {
         username: 'Ali Mehroz',    // First demo user
@@ -85,6 +86,9 @@ let currentData = {
  * These Sets track which boards and folders are currently expanded/collapsed
  * This ensures the UI state persists when the dashboard is re-rendered
  */
+
+
+//Unlike arrays, duplicate values are automatically ignored in sets. Thats why we use it here.
 
 // Set of board IDs that are currently expanded (open)
 let openBoards = new Set();
@@ -182,15 +186,21 @@ function showNotification(message, type = 'info', duration = 3000) {
     `;
 
     // Add to page
-    document.body.appendChild(notification);
+    document.body.appendChild(notification);    //adds notfication html code(child) to body html(parent)
 
     // Remove after duration
     setTimeout(() => {
-        if (notification.parentNode) {
+        if (notification.parentNode) {         //check if notification exists in parent(body) DOM before we can safely remove it.
             notification.remove();
         }
     }, duration);
 }
+
+
+
+//generateId() creates unique IDs for new boards, folders, and tasks
+//formatDate() converts dates like "2024-01-15" to "Jan 15, 2024" for display
+//here:
 
 /**
  * Generates a unique ID for new items
@@ -202,14 +212,14 @@ function generateId() {
 
 /**
  * Formats a date for display
- * @param {string} dateString - Date string
+ * @param {string} dateString - Date string     //this is just cool way of writing comments
  * @returns {string} Formatted date
  */
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
         year: 'numeric',
-        month: 'short',
+        month: 'short',            
         day: 'numeric'
     });
 }
@@ -239,7 +249,7 @@ function formatDateTime(dateString, timeString) {
  */
 function calculateCountdown(dueDate, dueTime) {
     const now = new Date();
-    const due = new Date(`${dueDate}T${dueTime}`);
+    const due = new Date(`${dueDate}T${dueTime}`);   //T is the standard way in JavaScript to separate date and time (YYYY-MM-DDTHH:MM).
     const diff = due - now;
 
     if (diff <= 0) {
@@ -259,9 +269,10 @@ function calculateCountdown(dueDate, dueTime) {
  * @param {string} userId - User ID
  * @param {object} data - Data to save
  */
-function saveData(userId, data) {
+function saveData(userId, data) {      //In JavaScript, localStorage.setItem() is a method used to store data in the browser’s local storage
     try {
-        localStorage.setItem(`swift_task_${userId}`, JSON.stringify(data));
+        localStorage.setItem(`swift_task_${userId}`, JSON.stringify(data));   //localStorage.setItem(key, value);      key is swift_task_${userId} and value is JSON.stringify(data)
+
     } catch (error) {
         console.error('Error saving data:', error);
         showNotification('Error saving data', 'error');
@@ -273,7 +284,9 @@ function saveData(userId, data) {
  * @param {string} userId - User ID
  * @returns {object} Loaded data
  */
-function loadData(userId) {
+function loadData(userId) {                                                            // localStorage can only store strings.
+
+                                                                                      // JSON.stringify converts the object/array into a string.
     try {
         const data = localStorage.getItem(`swift_task_${userId}`);
         return data ? JSON.parse(data) : { boards: [] };
@@ -295,14 +308,14 @@ function searchData(searchTerm, searchType) {
         return { data: currentData, expandBoards: [], expandFolders: [] };
     }
 
-    const term = searchTerm.toLowerCase().trim();
-    const filteredData = { boards: [] };
-    const expandBoards = [];
-    const expandFolders = [];
+    const term = searchTerm.toLowerCase().trim();  //term → will store the search text.
+    const filteredData = { boards: [] };          //filteredData → will store the search results.
+    const expandBoards = [];                      //expandBoards → will store the IDs of boards that need to be expanded.
+    const expandFolders = [];                     //expandFolders → will store the IDs of folders that need to be expanded.
 
     currentData.boards.forEach(board => {
         let boardMatches = false;
-        let filteredBoard = { ...board, folders: [] };
+        let filteredBoard = { ...board, folders: [] };    //... is the spread operator. It copies all properties from board and adds an empty folders array.
 
         // Search in board name
         if (searchType === 'all' || searchType === 'boards') {
