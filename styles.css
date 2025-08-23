@@ -240,7 +240,7 @@ body {
 }
 
 .folder-header {
-    background: #f59e0b;
+    background: #ffe79f;
     border: 2px solid #d97706;
     border-radius: 12px;
     padding: 18px;
@@ -252,7 +252,7 @@ body {
 }
 
 .folder-header:hover {
-    background: #fbbf24;
+    background: #FFD966;
     border-color: #d97706;
     box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
     transform: translateY(-2px);
