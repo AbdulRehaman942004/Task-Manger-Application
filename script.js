@@ -176,17 +176,17 @@ function showNotification(message, type = 'info', duration = 3000) {
 
     // STEP 2: Create the notification element
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`; // CSS classes for styling
-    
+    notification.className = `notification ${type}`;  //${type} is called template literal. // CSS classes for styling
+
     // STEP 3: Set the notification content with appropriate icon
     // The icon changes based on the notification type
     notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+        <i class="fas fa-${type === 'success' ?'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
         ${message}
     `;
 
     // Add to page
-    document.body.appendChild(notification);    //adds notfication html code(child) to body html(parent)
+    document.body.appendChild(notification);    //adds notfication html code(child) to end of body html(parent)
 
     // Remove after duration
     setTimeout(() => {
@@ -206,6 +206,7 @@ function showNotification(message, type = 'info', duration = 3000) {
  * Generates a unique ID for new items
  * @returns {string} Unique ID
  */
+
 function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
@@ -219,7 +220,7 @@ function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
         year: 'numeric',
-        month: 'short',            
+        month: 'short',
         day: 'numeric'
     });
 }
@@ -286,7 +287,7 @@ function saveData(userId, data) {      //In JavaScript, localStorage.setItem() i
  */
 function loadData(userId) {                                                            // localStorage can only store strings.
 
-                                                                                      // JSON.stringify converts the object/array into a string.
+    // JSON.stringify converts the object/array into a string.
     try {
         const data = localStorage.getItem(`swift_task_${userId}`);
         return data ? JSON.parse(data) : { boards: [] };
@@ -389,14 +390,16 @@ function searchData(searchTerm, searchType) {
         }
     });
 
-    // Remove duplicates from expand arrays
+    // Remove duplicates from expand arrays  
+    // //Sometimes same board/folder is added multiple times.
+    //Set ensures only unique IDs are stored.
     const uniqueExpandBoards = [...new Set(expandBoards)];
     const uniqueExpandFolders = [...new Set(expandFolders)];
 
-    return { 
-        data: filteredData, 
-        expandBoards: uniqueExpandBoards, 
-        expandFolders: uniqueExpandFolders 
+    return {
+        data: filteredData,
+        expandBoards: uniqueExpandBoards,
+        expandFolders: uniqueExpandFolders
     };
 }
 
@@ -406,11 +409,19 @@ function searchData(searchTerm, searchType) {
  * @param {string} searchTerm - Search term to highlight
  * @returns {string} HTML with highlighted text
  */
-function highlightSearchTerm(text, searchTerm) {
-    if (!searchTerm.trim()) return text;
-    
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+function highlightSearchTerm(text, searchTerm) {     //text → The string where you want to highlight something.
+    //searchTerm → The word or phrase that the user is searching for.
+    if (!searchTerm.trim()) return text;  //If the search term is empty or only spaces, return the original text—nothing to highlight.
+
+    const regex = new RegExp(`(${searchTerm})`, 'gi');   //RegExp is a built-in JavaScript object that represents a regular expression.
+
+    // 'gi' → two options:
+    //g → global → find all matches from the whole page, not just the first one.
+    //i → ignore case → “Task” = “task” = “TASK”.
+
+    return text.replace(regex, '<mark class="search-highlight">$1</mark>');   //replace() → replaces the matched text with the new text.
+    //$1 the text that was matched (the thing inside () in regex).
+    //<mark class="search-highlight">$1</mark> → the new text with added style(yellow highlight) that replaces the matched text.
 }
 
 // ========================================
@@ -424,15 +435,15 @@ function highlightSearchTerm(text, searchTerm) {
 function loginUser(username) {
     // Find user in static users
     const user = STATIC_USERS.find(u => u.username.toLowerCase() === username.toLowerCase());
-    
+
     if (!user) {
         showNotification('User not found. Please use one of the demo users.', 'error');
         return false;
     }
 
     // Set current user
-    currentUser = user;
-    currentUserSpan.textContent = user.username;
+    currentUser = user;                           //If user is found, store them in currentUser → so the app knows who is logged in.
+    currentUserSpan.textContent = user.username;  // Update the username on the page (currentUserSpan).
 
     // Load user data
     currentData = loadData(user.id);
@@ -485,7 +496,7 @@ function logoutUser() {
 function toggleBoard(boardId) {
     const boardContent = document.getElementById(`board-content-${boardId}`);
     const toggleIcon = document.getElementById(`toggle-icon-${boardId}`);
-    
+
     if (boardContent.style.display === 'none') {
         boardContent.style.display = 'block';
         toggleIcon.className = 'fas fa-chevron-up me-3 board-toggle-icon';
@@ -506,7 +517,7 @@ function toggleBoard(boardId) {
 function toggleFolder(boardId, folderId) {
     const folderTasks = document.getElementById(`folder-tasks-${folderId}`);
     const toggleIcon = document.getElementById(`folder-toggle-icon-${folderId}`);
-    
+
     if (folderTasks.style.display === 'none') {
         folderTasks.style.display = 'block';
         toggleIcon.className = 'fas fa-chevron-down me-3 folder-toggle-icon';
@@ -544,7 +555,7 @@ function addBoard(name) {
 
     currentData.boards.push(newBoard);
     saveData(currentUser.id, currentData);
-    
+
     // Use setTimeout to prevent immediate re-render conflicts
     setTimeout(() => {
         renderDashboard();
@@ -562,7 +573,7 @@ function deleteBoard(boardId) {
 
     // Remove board and all its folders and tasks
     currentData.boards = currentData.boards.filter(b => b.id !== boardId);
-    
+
     saveData(currentUser.id, currentData);
     setTimeout(() => {
         renderDashboard();
@@ -581,10 +592,10 @@ function deleteBoard(boardId) {
 function addFolderToBoard(boardId) {
     // Store current board ID for folder creation
     window.currentBoardId = boardId;
-    
+
     // Clear the form
     document.getElementById('addFolderForm').reset();
-    
+
     // Show add folder modal
     addFolderModal.show();
 }
@@ -594,7 +605,7 @@ function addFolderToBoard(boardId) {
  */
 function createFolder() {
     const folderName = document.getElementById('folderNameInput').value.trim();
-    
+
     if (!folderName) {
         showNotification('Please enter a folder name', 'error');
         return;
@@ -623,15 +634,15 @@ function createFolder() {
 
     if (!board.folders) board.folders = [];
     board.folders.push(newFolder);
-    
+
     saveData(currentUser.id, currentData);
     setTimeout(() => {
         renderDashboard();
         addFolderModal.hide();
-        
+
         // Clear form
         document.getElementById('addFolderForm').reset();
-        
+
         showNotification(`Folder "${folderName}" added to board "${board.name}"`, 'success');
     }, 10);
 }
@@ -649,7 +660,7 @@ function deleteFolderFromBoard(boardId, folderId) {
     if (!folder) return;
 
     board.folders = board.folders.filter(f => f.id !== folderId);
-    
+
     saveData(currentUser.id, currentData);
     setTimeout(() => {
         renderDashboard();
@@ -676,13 +687,13 @@ function addTaskToFolder(boardId, folderId) {
     // Store current board and folder for task creation
     window.currentBoardId = boardId;
     window.currentFolderId = folderId;
-    
+
     // Set default times
     const now = new Date();
     const currentTime = now.toTimeString().slice(0, 5);
     document.getElementById('startTime').value = currentTime;
     document.getElementById('dueTime').value = currentTime;
-    
+
     // Show add task modal
     addTaskModal.show();
 }
@@ -721,6 +732,12 @@ function addTask() {
     const board = currentData.boards.find(b => b.id === window.currentBoardId);
     const folder = board.folders.find(f => f.id === window.currentFolderId);
 
+    // Check if task with same name already exists in this folder
+    if (folder.tasks && folder.tasks.some(task => task.title.toLowerCase() === title.toLowerCase())) {
+        showNotification('A task with this name already exists in this folder', 'error');
+        return;
+    }
+
     const newTask = {
         id: generateId(),
         title,
@@ -738,15 +755,15 @@ function addTask() {
 
     if (!folder.tasks) folder.tasks = [];
     folder.tasks.push(newTask);
-    
+
     saveData(currentUser.id, currentData);
     setTimeout(() => {
         renderDashboard();
         addTaskModal.hide();
-        
+
         // Clear form
         document.getElementById('addTaskForm').reset();
-        
+
         showNotification('Task created successfully', 'success');
     }, 10);
 }
@@ -804,7 +821,7 @@ function editTask(taskId) {
  */
 function updateTask() {
     const taskId = document.getElementById('editTaskId').value;
-    
+
     if (!window.currentEditTask || window.currentEditTask.taskId !== taskId) {
         showNotification('Task not found', 'error');
         return;
@@ -813,7 +830,7 @@ function updateTask() {
     const board = currentData.boards.find(b => b.id === window.currentEditTask.boardId);
     const folder = board.folders.find(f => f.id === window.currentEditTask.folderId);
     const task = folder.tasks.find(t => t.id === taskId);
-    
+
     if (!task) return;
 
     // Check edit limit again
@@ -852,7 +869,7 @@ function updateTask() {
     setTimeout(() => {
         renderDashboard();
         editTaskModal.hide();
-        
+
         showNotification('Task updated successfully', 'success');
     }, 10);
 }
@@ -917,18 +934,18 @@ function renderDashboard() {
     // Get search term and type
     const searchTerm = searchInput.value.trim();
     const searchType = document.getElementById('searchType').value;
-    
+
     // Get data to render (original or filtered)
     let dataToRender;
     let expandBoards = [];
     let expandFolders = [];
-    
+
     if (searchTerm) {
         const searchResult = searchData(searchTerm, searchType);
         dataToRender = searchResult.data;
         expandBoards = searchResult.expandBoards;
         expandFolders = searchResult.expandFolders;
-        
+
         // Update open states for search results
         expandBoards.forEach(boardId => openBoards.add(boardId));
         expandFolders.forEach(folderId => openFolders.add(folderId));
@@ -968,7 +985,7 @@ function renderDashboard() {
         dataToRender.boards.forEach(board => {
             const boardElement = document.createElement('div');
             boardElement.className = 'board-container fade-in';
-            
+
             boardElement.innerHTML = `
                 <div class="card">
                     <div class="board-header" onclick="toggleBoard('${board.id}')" style="cursor: pointer;">
@@ -1001,7 +1018,7 @@ function renderDashboard() {
                     </div>
                 </div>
             `;
-            
+
             boardsContainer.appendChild(boardElement);
         });
 
@@ -1017,7 +1034,7 @@ function renderDashboard() {
  */
 function renderBoardFolders(board, searchTerm = '') {
     const folders = board.folders || [];
-    
+
     if (folders.length === 0) {
         return `
             <div class="text-center py-4">
@@ -1071,7 +1088,7 @@ function renderBoardFolders(board, searchTerm = '') {
  */
 function renderFolderTasks(folder, searchTerm = '') {
     const tasks = folder.tasks || [];
-    
+
     if (tasks.length === 0) {
         return `
             <div class="text-center py-3">
@@ -1089,7 +1106,7 @@ function renderFolderTasks(folder, searchTerm = '') {
 
     return sortedTasks.map(task => {
         const countdown = calculateCountdown(task.dueDate, task.dueTime);
-        
+
         // Enhanced countdown display with time
         let countdownText = '';
         if (countdown.overdue) {
@@ -1155,7 +1172,7 @@ function renderFolderTasks(folder, searchTerm = '') {
                         ${task.status === 'completed' ? '<i class="fas fa-check me-1"></i>' : ''}${highlightSearchTerm('Completed', searchTerm)}
                     </button>
                     <button class="btn btn-info btn-sm" onclick="editTask('${task.id}')" ${task.editCount >= 3 ? 'disabled' : ''}>
-                        <i class="fas fa-edit me-1"></i>Update Task
+                        <i class="fas fa-edit me-1"></i>Edit Task
                     </button>
                     <button class="btn btn-danger btn-sm" onclick="deleteTask('${task.id}')">
                         <i class="fas fa-trash me-1"></i>Delete Task
@@ -1175,11 +1192,11 @@ function renderFolderTasks(folder, searchTerm = '') {
  */
 function updateCountdowns() {
     const countdownElements = document.querySelectorAll('.task-countdown');
-    
+
     countdownElements.forEach(element => {
         const taskId = element.closest('.task-item').getAttribute('data-task-id');
         if (!taskId) return;
-        
+
         // Find the task data
         let task = null;
         for (const board of currentData.boards) {
@@ -1192,11 +1209,11 @@ function updateCountdowns() {
             }
             if (task) break;
         }
-        
+
         if (!task) return;
-        
+
         const countdown = calculateCountdown(task.dueDate, task.dueTime);
-        
+
         // Update countdown text
         let countdownText = '';
         if (countdown.overdue) {
@@ -1218,9 +1235,9 @@ function updateCountdowns() {
             countdownText = `<i class="fas fa-calendar me-1"></i>
                 Due in ${countdown.days} days ${countdown.hours} hours ${countdown.minutes} minutes`;
         }
-        
+
         element.innerHTML = countdownText;
-        
+
         // Update urgency class
         if (countdown.overdue || (countdown.days === 0 && countdown.hours < 24)) {
             element.classList.add('urgent');
@@ -1242,11 +1259,11 @@ function showProfile() {
 
     // Update profile data
     document.getElementById('profileUsername').textContent = currentUser.username;
-    
+
     // Calculate statistics from the hierarchy
     let totalTasks = 0;
     let completedTasks = 0;
-    
+
     currentData.boards.forEach(board => {
         (board.folders || []).forEach(folder => {
             (folder.tasks || []).forEach(task => {
@@ -1257,7 +1274,7 @@ function showProfile() {
             });
         });
     });
-    
+
     const pendingTasks = totalTasks - completedTasks;
 
     document.getElementById('totalTasks').textContent = totalTasks;
@@ -1272,7 +1289,7 @@ function showProfile() {
 // ========================================
 
 // Login form submission
-loginForm.addEventListener('submit', function(e) {
+loginForm.addEventListener('submit', function (e) {
     e.preventDefault();
     const username = usernameInput.value.trim();
     if (username) {
@@ -1281,19 +1298,19 @@ loginForm.addEventListener('submit', function(e) {
 });
 
 // Logout button
-logoutBtn.addEventListener('click', function(e) {
+logoutBtn.addEventListener('click', function (e) {
     e.preventDefault();
     logoutUser();
 });
 
 // Profile button
-profileBtn.addEventListener('click', function(e) {
+profileBtn.addEventListener('click', function (e) {
     e.preventDefault();
     showProfile();
 });
 
 // Add board button
-addBoardBtn.addEventListener('click', function() {
+addBoardBtn.addEventListener('click', function () {
     addBoard(boardNameInput.value);
     boardNameInput.value = '';
 });
@@ -1308,7 +1325,7 @@ document.getElementById('updateTaskBtn').addEventListener('click', updateTask);
 document.getElementById('saveFolderBtn').addEventListener('click', createFolder);
 
 // Enter key handlers for input fields
-boardNameInput.addEventListener('keypress', function(e) {
+boardNameInput.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         addBoard(this.value);
         this.value = '';
@@ -1316,7 +1333,7 @@ boardNameInput.addEventListener('keypress', function(e) {
 });
 
 // Enter key handler for folder name input
-document.getElementById('folderNameInput').addEventListener('keypress', function(e) {
+document.getElementById('folderNameInput').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         createFolder();
@@ -1326,24 +1343,24 @@ document.getElementById('folderNameInput').addEventListener('keypress', function
 // Search functionality with debouncing
 let searchTimeout;
 let previousSearchTerm = '';
-searchInput.addEventListener('input', function() {
+searchInput.addEventListener('input', function () {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
         const currentSearchTerm = searchInput.value.trim();
-        
+
         // If search term was removed (cleared), close all accordions
         if (previousSearchTerm && !currentSearchTerm) {
             openBoards.clear();
             openFolders.clear();
         }
-        
+
         previousSearchTerm = currentSearchTerm;
         renderDashboard();
         updateClearSearchButton();
     }, 300); // 300ms delay for better performance
 });
 
-searchType.addEventListener('change', function() {
+searchType.addEventListener('change', function () {
     renderDashboard();
 });
 
@@ -1356,11 +1373,11 @@ function clearSearch() {
     searchInput.value = '';
     searchType.value = 'all';
     clearSearchBtn.style.display = 'none';
-    
+
     // Reset open states when clearing search - close all accordions
     openBoards.clear();
     openFolders.clear();
-    
+
     renderDashboard();
 }
 
@@ -1376,10 +1393,10 @@ function updateClearSearchButton() {
 }
 
 // Set default dates for task forms
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const today = new Date().toISOString().split('T')[0];
     const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    
+
     document.getElementById('startDate').value = today;
     document.getElementById('dueDate').value = tomorrow;
 });
