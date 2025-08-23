@@ -254,7 +254,13 @@ function calculateCountdown(dueDate, dueTime) {
     const diff = due - now;
 
     if (diff <= 0) {
-        return { days: 0, hours: 0, minutes: 0, seconds: 0, overdue: true };
+        // Calculate overdue time properly
+        const overdueDiff = Math.abs(diff);
+        const days = Math.floor(overdueDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((overdueDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((overdueDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((overdueDiff % (1000 * 60)) / 1000);
+        return { days, hours, minutes, seconds, overdue: true };
     }
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -440,15 +446,14 @@ function loginUser(username) {
         showNotification('User not found. Please use one of the demo users.', 'error');
         return false;
     }
-
+    console.log(user);
     // Set current user
-    currentUser = user;                           //If user is found, store them in currentUser → so the app knows who is logged in.
+    currentUser = user;    
+    localStorage.setItem('swift_task_current_user', user.id);                       //If user is found, store them in currentUser → so the app knows who is logged in.
     currentUserSpan.textContent = user.username;  // Update the username on the page (currentUserSpan).
-
     // Load user data
     currentData = loadData(user.id);
 
-    // Show dashboard
     loginScreen.style.display = 'none';
     dashboardScreen.style.display = 'block';
 
@@ -473,7 +478,7 @@ function logoutUser() {
     // Reset state
     currentUser = null;
     currentData = { boards: [] };
-
+    localStorage.removeItem('swift_task_current_user');
     // Show login screen
     dashboardScreen.style.display = 'none';
     loginScreen.style.display = 'block';
@@ -697,6 +702,12 @@ function addTaskToFolder(boardId, folderId) {
     document.getElementById('startTime').value = currentTime;
     document.getElementById('dueTime').value = currentTime;
 
+    // Set default due date to next day
+    const nextDay = new Date(now);
+    nextDay.setDate(now.getDate() + 2);
+    const nextDayDate = nextDay.toISOString().split('T')[0];
+    document.getElementById('dueDate').value = nextDayDate;
+
     // Show add task modal
     addTaskModal.show();
 }
@@ -721,6 +732,13 @@ function addTask() {
 
     const startDateTime = new Date(`${startDate}T${startTime}`);
     const dueDateTime = new Date(`${dueDate}T${dueTime}`);
+    const now = new Date();
+
+    // Check if due time is in the past
+    if (dueDateTime < now) {
+        showNotification('Due date/time cannot be in the past', 'error');
+        return;
+    }
 
     if (startDateTime > dueDateTime) {
         showNotification('Start date/time cannot be after due date/time', 'error');
@@ -871,6 +889,13 @@ function updateTask() {
 
     const startDateTime = new Date(`${task.startDate}T${task.startTime}`);
     const dueDateTime = new Date(`${task.dueDate}T${task.dueTime}`);
+    const now = new Date();
+
+    // Check if due time is in the past
+    if (dueDateTime < now) {
+        showNotification('Due date/time cannot be in the past', 'error');
+        return;
+    }
 
     if (startDateTime > dueDateTime) {
         showNotification('Start date/time cannot be after due date/time', 'error');
@@ -1352,12 +1377,11 @@ document.getElementById('folderNameInput').addEventListener('keypress', function
     }
 });
 
-// Search functionality with debouncing
+// Search functionality
 let searchTimeout;
 let previousSearchTerm = '';
 searchInput.addEventListener('input', function () {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
+
         const currentSearchTerm = searchInput.value.trim();
 
         // If search term was removed (cleared), close all accordions
@@ -1369,7 +1393,6 @@ searchInput.addEventListener('input', function () {
         previousSearchTerm = currentSearchTerm;
         renderDashboard();
         updateClearSearchButton();
-    }, 300); // 300ms delay for better performance
 });
 
 searchType.addEventListener('change', function () {
@@ -1424,7 +1447,7 @@ function initApp() {
     // Check if user is already logged in
     const savedUser = localStorage.getItem('swift_task_current_user');
     if (savedUser) {
-        const user = STATIC_USERS.find(u => u.username === savedUser);
+        const user = STATIC_USERS.find(u => u.id === savedUser);
         if (user) {
             loginUser(user.username);
         }
