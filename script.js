@@ -635,6 +635,9 @@ function createFolder() {
     if (!board.folders) board.folders = [];
     board.folders.push(newFolder);
 
+    // Automatically open the board when a folder is added
+    openBoards.add(window.currentBoardId);
+
     saveData(currentUser.id, currentData);
     setTimeout(() => {
         renderDashboard();
@@ -738,6 +741,12 @@ function addTask() {
         return;
     }
 
+    //This is a comment out code that was used to limit the number of tasks in a folder to 3.
+    // if(folder.tasks.length >= 3){
+    //   showNotification('A folder can only have 3 tasks', 'error');
+    // return;
+    // }
+
     const newTask = {
         id: generateId(),
         title,
@@ -755,6 +764,9 @@ function addTask() {
 
     if (!folder.tasks) folder.tasks = [];
     folder.tasks.push(newTask);
+
+    // Automatically open the folder when a task is added
+    openFolders.add(window.currentFolderId);
 
     saveData(currentUser.id, currentData);
     setTimeout(() => {
