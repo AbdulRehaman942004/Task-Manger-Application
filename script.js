@@ -702,12 +702,19 @@ function addTaskToFolder(boardId, folderId) {
     document.getElementById('startTime').value = currentTime;
     document.getElementById('dueTime').value = currentTime;
 
-    // Set default due date to next day
-    const nextDay = new Date(now);
-    nextDay.setDate(now.getDate() + 2);
-    const nextDayDate = nextDay.toISOString().split('T')[0];
-    document.getElementById('dueDate').value = nextDayDate;
+    // Set default start date to tomorrow (current date + 1 day)
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+    const tomorrowDate = tomorrow.toISOString().split('T')[0];
+    document.getElementById('startDate').value = tomorrowDate;
 
+    // Set default due date to day after tomorrow (current date + 2 days)
+    const dayAfterTomorrow = new Date(now);
+    dayAfterTomorrow.setDate(now.getDate() + 2);
+    const dayAfterTomorrowDate = dayAfterTomorrow.toISOString().split('T')[0];
+    document.getElementById('dueDate').value = dayAfterTomorrowDate;
+
+   
     // Show add task modal
     addTaskModal.show();
 }
@@ -716,6 +723,7 @@ function addTaskToFolder(boardId, folderId) {
  * Adds a new task to the current folder
  */
 function addTask() {
+    
     const title = document.getElementById('taskTitle').value.trim();
     const priority = document.getElementById('taskPriority').value;
     const startDate = document.getElementById('startDate').value;
@@ -1427,14 +1435,7 @@ function updateClearSearchButton() {
     }
 }
 
-// Set default dates for task forms
-document.addEventListener('DOMContentLoaded', function () {
-    const today = new Date().toISOString().split('T')[0];
-    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    document.getElementById('startDate').value = today;
-    document.getElementById('dueDate').value = tomorrow;
-});
 
 // ========================================
 // INITIALIZATION
