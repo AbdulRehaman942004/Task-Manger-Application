@@ -52,20 +52,26 @@
 const STATIC_USERS = [
     {
         username: 'Faraz Mehdi',    // First demo user
+        password: 'password123',
         id: 'user_1',              // Unique user ID
         joinDate: '2024-01-15'     // Demo join date
+
     },
     {
         username: 'Abdul Rehman',  // Second demo user
+        password: 'password456',
         id: 'user_2',              // Unique user ID
         joinDate: '2024-02-20'     // Demo join date
+
     },
     {
         username: 'Ali Mehroz',      // Third demo user
+        password: 'password789',
         id: 'user_3',              // Unique user ID
         joinDate: '2024-03-10'     // Demo join date
     }
 ];
+
 
 /**
  * APPLICATION STATE VARIABLES
@@ -116,7 +122,7 @@ const dashboardScreen = document.getElementById('dashboardScreen'); // Dashboard
 
 const loginForm = document.getElementById('loginForm');     // Login form element
 const usernameInput = document.getElementById('username');  // Username input field
-
+const passwordInput = document.getElementById('password');  // Password input field
 // ========================================
 // NAVIGATION ELEMENTS
 // ========================================
@@ -437,20 +443,22 @@ function highlightSearchTerm(text, searchTerm) {     //text → The string where
 /**
  * Handles user login
  * @param {string} username - Username to login
+ * @param {string} password - Password to verify
  */
-function loginUser(username) {
+function loginUser(username, password) {
     // Find user in static users
-    const user = STATIC_USERS.find(u => u.username.toLowerCase() === username.toLowerCase());
+    const user = STATIC_USERS.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
 
     if (!user) {
-        showNotification('User not found. Please use one of the demo users.', 'error');
+        showNotification('Invalid username or password. Please use one of the demo users with correct credentials.', 'error');
         return false;
     }
-    console.log(user);
+
     // Set current user
     currentUser = user;
-    localStorage.setItem('swift_task_current_user', user.id);                       //If user is found, store them in currentUser → so the app knows who is logged in.
-    currentUserSpan.textContent = user.username;  // Update the username on the page (currentUserSpan).
+    localStorage.setItem('swift_task_current_user', user.id);
+    currentUserSpan.textContent = user.username;  // Update the username on the page
+    
     // Load user data
     currentData = loadData(user.id);
 
@@ -596,7 +604,7 @@ function deleteBoard(boardId) {
  */
 function addFolderToBoard(boardId) {
     // Store current board ID for folder creation
-    window.currentBoardId = boardId;
+    window.currentBoardId = boardId;       //window is used for global scope
 
     // Clear the form
     document.getElementById('addFolderForm').reset();
@@ -1144,7 +1152,14 @@ function renderBoardFolders(board, searchTerm = '') {
                 ${renderFolderTasks(folder, searchTerm)}
             </div>
         </div>
-    `).join('');
+    `).join('') +
+        // Add sub-boards display
+        (board.subBoards ? board.subBoards.map(subBoard => `
+        <div style="margin-left: 20px; border-left: 3px solid #4299e1; padding-left: 10px; margin-top: 10px; background: rgba(66, 153, 225, 0.1); border-radius: 8px; padding: 15px;">
+            <h6 style="color: #4299e1; margin-bottom: 10px;"><i class="fas fa-layer-group me-2"></i>${subBoard.name}</h6>
+            <small class="text-muted">Sub-Board (Demo Feature)</small>
+        </div>
+    `).join('') : '');
 }
 
 /**
@@ -1359,9 +1374,14 @@ function showProfile() {
 loginForm.addEventListener('submit', function (e) {
     e.preventDefault();
     const username = usernameInput.value.trim();
-    if (username) {
-        loginUser(username);
+    const password = passwordInput.value.trim();
+    
+    if (username && password) {
+        loginUser(username, password);
+    } else {
+        showNotification('Please enter both username and password', 'error');
     }
+    
 });
 
 // Logout button
@@ -1460,6 +1480,36 @@ function updateClearSearchButton() {
 
 
 // ========================================
+// DEMO SUB-BOARD FUNCTIONALITY
+// ========================================
+
+/**
+ * Adds a demo sub-board to the first board for demonstration purposes
+ */
+function addDemoSubBoard() {
+    // Find the first board
+    if (currentData.boards.length > 0) {
+        const firstBoard = currentData.boards[0];
+
+        // Add a sub-board to it
+        if (!firstBoard.subBoards) firstBoard.subBoards = [];
+
+        firstBoard.subBoards.push({
+            id: generateId(),
+            name: "Demo Sub-Board",
+            createdAt: new Date().toISOString(),
+            folders: []
+        });
+
+        saveData(currentUser.id, currentData);
+        renderDashboard();
+        showNotification('Demo sub-board added!', 'success');
+    } else {
+        showNotification('Please create a board first!', 'error');
+    }
+}
+
+// ========================================
 // INITIALIZATION
 // ========================================
 
@@ -1470,9 +1520,16 @@ function initApp() {
     // Check if user is already logged in
     const savedUser = localStorage.getItem('swift_task_current_user');
     if (savedUser) {
-        const user = STATIC_USERS.find(u => u.id === savedUser);
+        const user = STATIC_USERS.find(u => u.id === savedUser && u.password===passwordInput.value);
         if (user) {
-            loginUser(user.username);
+            // Auto-login without password for session persistence
+            currentUser = user;
+            currentUserSpan.textContent = user.username;
+            currentData = loadData(user.id);
+            
+            loginScreen.style.display = 'none';
+            dashboardScreen.style.display = 'block';
+            renderDashboard();
         }
     }
 

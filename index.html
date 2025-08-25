@@ -107,6 +107,23 @@
                                     <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
                                 </div>
                             </div>
+
+                             <div class="mb-3">
+                                <!-- Label for password input -->
+                                <label for="password" class="form-label">Password</label>
+                                
+                                <!-- Bootstrap input group with icon -->
+                                <div class="input-group">
+                                    <!-- Input group prefix with lock icon -->
+                                    <span class="input-group-text">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    
+                                    <!-- password input field -->
+                                    <!-- required: Makes field mandatory -->
+                                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                                </div>
+                            </div>
                             
                             <!-- Login button - full width -->
                             <button type="submit" class="btn btn-primary w-100 login-btn">
@@ -122,12 +139,12 @@
                         
                         <!-- Demo users info box -->
                         <div class="demo-info mt-4">
-                            <!-- Small text with demo user names -->
+                            <!-- Small text with demo user names and passwords -->
                             <small class="text-muted">
                                 <strong>Demo Users:</strong><br>
-                                • Faraz Mehdi<br>
-                                • Abdul Rehman<br>
-                                • Ali Mehroz
+                                • Faraz Mehdi (password: password123)<br>
+                                • Abdul Rehman (password: password456)<br>
+                                • Ali Mehroz (password: password789)
                             </small>
                         </div>
                     </div>
