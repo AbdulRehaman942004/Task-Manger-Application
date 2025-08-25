@@ -51,7 +51,7 @@
 
 const STATIC_USERS = [
     {
-        username: 'Ali Mehroz',    // First demo user
+        username: 'Faraz Mehdi',    // First demo user
         id: 'user_1',              // Unique user ID
         joinDate: '2024-01-15'     // Demo join date
     },
@@ -61,7 +61,7 @@ const STATIC_USERS = [
         joinDate: '2024-02-20'     // Demo join date
     },
     {
-        username: 'Elon Musk',      // Third demo user
+        username: 'Ali Mehroz',      // Third demo user
         id: 'user_3',              // Unique user ID
         joinDate: '2024-03-10'     // Demo join date
     }
@@ -181,7 +181,7 @@ function showNotification(message, type = 'info', duration = 3000) {
     // STEP 3: Set the notification content with appropriate icon
     // The icon changes based on the notification type
     notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ?'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
         ${message}
     `;
 
@@ -448,7 +448,7 @@ function loginUser(username) {
     }
     console.log(user);
     // Set current user
-    currentUser = user;    
+    currentUser = user;
     localStorage.setItem('swift_task_current_user', user.id);                       //If user is found, store them in currentUser → so the app knows who is logged in.
     currentUserSpan.textContent = user.username;  // Update the username on the page (currentUserSpan).
     // Load user data
@@ -714,7 +714,7 @@ function addTaskToFolder(boardId, folderId) {
     const dayAfterTomorrowDate = dayAfterTomorrow.toISOString().split('T')[0];
     document.getElementById('dueDate').value = dayAfterTomorrowDate;
 
-   
+
     // Show add task modal
     addTaskModal.show();
 }
@@ -723,7 +723,7 @@ function addTaskToFolder(boardId, folderId) {
  * Adds a new task to the current folder
  */
 function addTask() {
-    
+
     const title = document.getElementById('taskTitle').value.trim();
     const priority = document.getElementById('taskPriority').value;
     const startDate = document.getElementById('startDate').value;
@@ -871,19 +871,6 @@ function updateTask() {
 
     if (!task) return;
 
-    // Check if Task has been changed or not
-    if (task.title === document.getElementById('editTaskTitle').value.trim() &&
-        task.priority === document.getElementById('editTaskPriority').value &&
-        task.startDate === document.getElementById('editStartDate').value &&
-        task.startTime === document.getElementById('editStartTime').value &&
-        task.dueDate === document.getElementById('editDueDate').value &&
-        task.dueTime === document.getElementById('editDueTime').value &&
-        task.description === document.getElementById('editTaskDescription').value.trim()) {
-        showNotification('No changes made to the task', 'error');
-        editTaskModal.hide();
-        return;
-    }
-
     // Check edit limit again
     if (task.editCount >= 3) {
         showNotification('This task has reached its edit limit', 'error');
@@ -891,25 +878,36 @@ function updateTask() {
         return;
     }
 
-    // Update task data
-    task.title = document.getElementById('editTaskTitle').value.trim();
-    task.priority = document.getElementById('editTaskPriority').value;
-    task.startDate = document.getElementById('editStartDate').value;
-    task.startTime = document.getElementById('editStartTime').value;
-    task.dueDate = document.getElementById('editDueDate').value;
-    task.dueTime = document.getElementById('editDueTime').value;
-    task.description = document.getElementById('editTaskDescription').value.trim();
-    task.editCount++;
-    task.lastEdited = new Date().toISOString();
+    // Get form values for validation
+    const newTitle = document.getElementById('editTaskTitle').value.trim();
+    const newPriority = document.getElementById('editTaskPriority').value;
+    const newStartDate = document.getElementById('editStartDate').value;
+    const newStartTime = document.getElementById('editStartTime').value;
+    const newDueDate = document.getElementById('editDueDate').value;
+    const newDueTime = document.getElementById('editDueTime').value;
+    const newDescription = document.getElementById('editTaskDescription').value.trim();
 
-    // Validation
-    if (!task.title || !task.startDate || !task.startTime || !task.dueDate || !task.dueTime) {
+    // Check if Task has been changed or not
+    if (task.title === newTitle &&
+        task.priority === newPriority &&
+        task.startDate === newStartDate &&
+        task.startTime === newStartTime &&
+        task.dueDate === newDueDate &&
+        task.dueTime === newDueTime &&
+        task.description === newDescription) {
+        showNotification('No changes made to the task', 'error');
+        editTaskModal.hide();
+        return;
+    }
+
+    // Validation BEFORE updating task data
+    if (!newTitle || !newStartDate || !newStartTime || !newDueDate || !newDueTime) {
         showNotification('Please fill in all required fields', 'error');
         return;
     }
 
-    const startDateTime = new Date(`${task.startDate}T${task.startTime}`);
-    const dueDateTime = new Date(`${task.dueDate}T${task.dueTime}`);
+    const startDateTime = new Date(`${newStartDate}T${newStartTime}`);
+    const dueDateTime = new Date(`${newDueDate}T${newDueTime}`);
     const now = new Date();
 
     // Check if due time is in the past
@@ -922,6 +920,17 @@ function updateTask() {
         showNotification('Start date/time cannot be after due date/time', 'error');
         return;
     }
+
+    // Update task data ONLY after validation passes
+    task.title = newTitle;
+    task.priority = newPriority;
+    task.startDate = newStartDate;
+    task.startTime = newStartTime;
+    task.dueDate = newDueDate;
+    task.dueTime = newDueTime;
+    task.description = newDescription;
+    task.editCount++;
+    task.lastEdited = new Date().toISOString();
 
     saveData(currentUser.id, currentData);
     setTimeout(() => {
@@ -1403,17 +1412,17 @@ let searchTimeout;
 let previousSearchTerm = '';
 searchInput.addEventListener('input', function () {
 
-        const currentSearchTerm = searchInput.value.trim();
+    const currentSearchTerm = searchInput.value.trim();
 
-        // If search term was removed (cleared), close all accordions
-        if (previousSearchTerm && !currentSearchTerm) {
-            openBoards.clear();
-            openFolders.clear();
-        }
+    // If search term was removed (cleared), close all accordions
+    if (previousSearchTerm && !currentSearchTerm) {
+        openBoards.clear();
+        openFolders.clear();
+    }
 
-        previousSearchTerm = currentSearchTerm;
-        renderDashboard();
-        updateClearSearchButton();
+    previousSearchTerm = currentSearchTerm;
+    renderDashboard();
+    updateClearSearchButton();
 });
 
 searchType.addEventListener('change', function () {
