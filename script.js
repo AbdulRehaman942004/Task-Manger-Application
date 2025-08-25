@@ -871,6 +871,19 @@ function updateTask() {
 
     if (!task) return;
 
+    // Check if Task has been changed or not
+    if (task.title === document.getElementById('editTaskTitle').value.trim() &&
+        task.priority === document.getElementById('editTaskPriority').value &&
+        task.startDate === document.getElementById('editStartDate').value &&
+        task.startTime === document.getElementById('editStartTime').value &&
+        task.dueDate === document.getElementById('editDueDate').value &&
+        task.dueTime === document.getElementById('editDueTime').value &&
+        task.description === document.getElementById('editTaskDescription').value.trim()) {
+        showNotification('No changes made to the task', 'error');
+        editTaskModal.hide();
+        return;
+    }
+
     // Check edit limit again
     if (task.editCount >= 3) {
         showNotification('This task has reached its edit limit', 'error');
