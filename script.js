@@ -15,13 +15,33 @@
  * - Search through all content
  * - View user statistics
  * 
+ * AUTHENTICATION SYSTEM:
+ * - Username and password-based authentication
+ * - Three demo users with predefined credentials
+ * - Session persistence using localStorage
+ * - Auto-login functionality for returning users
+ * - Secure logout with complete session cleanup
+ * 
+ * SECURITY FEATURES:
+ * - Password input fields use type="password" for security
+ * - Form validation prevents empty submissions
+ * - Session data cleared on logout
+ * - Input sanitization and validation
+ * 
+ * PRODUCTION SECURITY CONSIDERATIONS:
+ * - Passwords should be hashed using bcrypt or similar
+ * - Use HTTPS for secure credential transmission
+ * - Implement rate limiting for login attempts
+ * - Use secure session tokens with expiration
+ * - Store user data in secure database, not client-side
+ * 
  * DATA STRUCTURE:
  * - Boards contain folders
  * - Folders contain tasks
  * - Tasks have priorities, status, dates, and edit limits
  * 
  * TECHNICAL FEATURES:
- * - User authentication (simple username-based)
+ * - User authentication (username + password)
  * - Board and folder management
  * - Task creation, editing, and deletion
  * - Task status management (Pending, Active, Completed)
@@ -45,28 +65,33 @@
  * In a real application, this would come from a database.
  * Each user has:
  * - username: Display name for the user
+ * - password: Authentication password (in production, this should be hashed)
  * - id: Unique identifier for the user
  * - joinDate: When the user was created (for demo purposes)
+ * 
+ * SECURITY NOTE: In a production environment, passwords should be:
+ * - Hashed using bcrypt or similar algorithms
+ * - Stored securely in a database
+ * - Never stored in plain text in client-side code
+ * - Transmitted over HTTPS only
  */
 
 const STATIC_USERS = [
     {
         username: 'Faraz Mehdi',    // First demo user
-        password: 'password123',
+        password: 'password123',    // Demo password (should be hashed in production)
         id: 'user_1',              // Unique user ID
         joinDate: '2024-01-15'     // Demo join date
-
     },
     {
         username: 'Abdul Rehman',  // Second demo user
-        password: 'password456',
+        password: 'password456',    // Demo password (should be hashed in production)
         id: 'user_2',              // Unique user ID
         joinDate: '2024-02-20'     // Demo join date
-
     },
     {
         username: 'Ali Mehroz',      // Third demo user
-        password: 'password789',
+        password: 'password789',    // Demo password (should be hashed in production)
         id: 'user_3',              // Unique user ID
         joinDate: '2024-03-10'     // Demo join date
     }
@@ -122,7 +147,7 @@ const dashboardScreen = document.getElementById('dashboardScreen'); // Dashboard
 
 const loginForm = document.getElementById('loginForm');     // Login form element
 const usernameInput = document.getElementById('username');  // Username input field
-const passwordInput = document.getElementById('password');  // Password input field
+const passwordInput = document.getElementById('password');  // Password input field (type="password" for security)
 // ========================================
 // NAVIGATION ELEMENTS
 // ========================================
@@ -441,31 +466,61 @@ function highlightSearchTerm(text, searchTerm) {     //text → The string where
 // ========================================
 
 /**
- * Handles user login
- * @param {string} username - Username to login
- * @param {string} password - Password to verify
+ * Handles user login with username and password authentication
+ * @param {string} username - Username to login (case-insensitive)
+ * @param {string} password - Password to verify (case-sensitive)
+ * @returns {boolean} - Returns true if login successful, false otherwise
+ * 
+ * AUTHENTICATION PROCESS:
+ * 1. Validates that both username and password are provided
+ * 2. Searches for user in STATIC_USERS array
+ * 3. Compares username (case-insensitive) and password (case-sensitive)
+ * 4. If match found, sets current user and loads user data
+ * 5. Switches to dashboard view
+ * 6. Shows success/error notification
+ * 
+ * SECURITY NOTES:
+ * - In production, passwords should be hashed and compared securely
+ * - Consider implementing rate limiting for failed login attempts
+ * - Use HTTPS for secure transmission of credentials
+ * - Consider implementing session tokens instead of storing user ID
  */
 function loginUser(username, password) {
-    // Find user in static users
-    const user = STATIC_USERS.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+    // Validate input parameters
+    if (!username || !password) {
+        showNotification('Please enter both username and password', 'error');
+        return false;
+    }
+
+    // Find user in static users array
+    // Username comparison is case-insensitive, password is case-sensitive
+    const user = STATIC_USERS.find(u => 
+        u.username.toLowerCase() === username.toLowerCase() && 
+        u.password === password
+    );
 
     if (!user) {
         showNotification('Invalid username or password. Please use one of the demo users with correct credentials.', 'error');
         return false;
     }
 
-    // Set current user
+    // Authentication successful - set current user
     currentUser = user;
-    localStorage.setItem('swift_task_current_user', user.id);
-    currentUserSpan.textContent = user.username;  // Update the username on the page
     
-    // Load user data
+    // Store user session in localStorage for auto-login
+    localStorage.setItem('swift_task_current_user', user.id);
+    
+    // Update UI to show logged-in user
+    currentUserSpan.textContent = user.username;
+    
+    // Load user's saved data from localStorage
     currentData = loadData(user.id);
 
+    // Switch from login screen to dashboard
     loginScreen.style.display = 'none';
     dashboardScreen.style.display = 'block';
 
-    // Render dashboard
+    // Render the dashboard with user's data
     renderDashboard();
 
     // Show welcome message
@@ -475,26 +530,44 @@ function loginUser(username, password) {
 }
 
 /**
- * Handles user logout
+ * Handles user logout and session cleanup
+ * 
+ * LOGOUT PROCESS:
+ * 1. Saves current user data to localStorage
+ * 2. Clears current user session
+ * 3. Resets application state
+ * 4. Removes session data from localStorage
+ * 5. Switches back to login screen
+ * 6. Clears login form for security
+ * 7. Shows logout confirmation
+ * 
+ * SECURITY NOTES:
+ * - Clears all sensitive data from memory
+ * - Removes session token from localStorage
+ * - Resets form to prevent credential exposure
+ * - Ensures complete session termination
  */
 function logoutUser() {
-    // Save current data before logout
+    // Save current user's data before logout to preserve work
     if (currentUser) {
         saveData(currentUser.id, currentData);
     }
 
-    // Reset state
+    // Clear current user session and reset application state
     currentUser = null;
     currentData = { boards: [] };
+    
+    // Remove session data from localStorage for security
     localStorage.removeItem('swift_task_current_user');
-    // Show login screen
+    
+    // Switch from dashboard back to login screen
     dashboardScreen.style.display = 'none';
     loginScreen.style.display = 'block';
 
-    // Clear form
+    // Clear login form to prevent credential exposure
     loginForm.reset();
 
-    // Show logout message
+    // Show logout confirmation message
     showNotification('Logged out successfully', 'info');
 }
 
@@ -1370,18 +1443,20 @@ function showProfile() {
 // EVENT LISTENERS
 // ========================================
 
-// Login form submission
+// Login form submission event handler
 loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
+    
+    // Get and trim username and password from form inputs
     const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
     
+    // Validate that both fields are filled before attempting login
     if (username && password) {
         loginUser(username, password);
     } else {
         showNotification('Please enter both username and password', 'error');
     }
-    
 });
 
 // Logout button
@@ -1514,32 +1589,54 @@ function addDemoSubBoard() {
 // ========================================
 
 /**
- * Initializes the application
+ * Initializes the application and handles session restoration
+ * 
+ * INITIALIZATION PROCESS:
+ * 1. Checks for existing user session in localStorage
+ * 2. If session exists, attempts auto-login (password already verified in previous session)
+ * 3. Loads user data and switches to dashboard if auto-login successful
+ * 4. Sets up real-time countdown timers for task deadlines
+ * 
+ * SESSION MANAGEMENT:
+ * - Uses localStorage to persist user sessions across browser sessions
+ * - Auto-login only works if user previously logged in successfully
+ * - No password re-verification needed for session restoration
+ * - Falls back to login screen if no valid session found
+ * 
+ * SECURITY NOTES:
+ * - Session restoration is based on user ID only (password already verified)
+ * - In production, consider using secure session tokens with expiration
+ * - Consider implementing session timeout for security
  */
 function initApp() {
-    // Check if user is already logged in
+    // Check if user is already logged in from previous session
     const savedUser = localStorage.getItem('swift_task_current_user');
+    
     if (savedUser) {
-        const user = STATIC_USERS.find(u => u.id === savedUser && u.password===passwordInput.value);
+        // Find user by ID (password already verified in previous login)
+        const user = STATIC_USERS.find(u => u.id === savedUser);
+        
         if (user) {
-            // Auto-login without password for session persistence
+            // Auto-login for session persistence
+            // Password verification not needed as it was already done in previous session
             currentUser = user;
             currentUserSpan.textContent = user.username;
             currentData = loadData(user.id);
             
+            // Switch directly to dashboard
             loginScreen.style.display = 'none';
             dashboardScreen.style.display = 'block';
             renderDashboard();
         }
     }
 
-    // Set up countdown timers
+    // Set up real-time countdown timers for task deadlines
     setInterval(() => {
         if (currentUser && !window.isRendering) {
-            // Only update countdowns, not full re-render
+            // Only update countdowns, not full re-render for performance
             updateCountdowns();
         }
-    }, 1000); // Update every second for more accurate countdown
+    }, 1000); // Update every second for accurate countdown display
 }
 
 // Initialize the application when the page loads

@@ -41,7 +41,9 @@ Task Management/
 ├── index.html          # Main application interface (646 lines)
 ├── styles.css          # Complete styling (1,579 lines)
 ├── script.js           # Application logic (1,489 lines)
-└── README.md           # Project documentation
+├── README.md           # Project documentation
+└── docs/
+    └── Swift Task - Professional Tas....pptx  # Project presentation
 ```
 
 ## 🚀 Quick Start
@@ -64,15 +66,23 @@ Task Management/
    - The application will load immediately
 
 3. **Login with Demo Users**
-   - **Faraz Mehdi** (user_1)
-   - **Abdul Rehman** (user_2)
-   - **Ali Mehroz** (user_3)
+   - **Faraz Mehdi** (password: password123)
+   - **Abdul Rehman** (password: password456)
+   - **Ali Mehroz** (password: password789)
 
 4. **Start Using**
    - Create your first board
    - Add folders to organize tasks
    - Create tasks with priorities and deadlines
    - Track progress with status updates
+
+## 📊 Project Documentation
+
+### Presentation
+A comprehensive PowerPoint presentation is available in the `docs/` folder:
+- **File**: `Swift Task - Professional Tas....pptx`
+- **Content**: Detailed project overview, features demonstration, and technical implementation
+- **Purpose**: Useful for presentations, demos, or understanding the project scope
 
 ## 📊 Data Architecture
 
